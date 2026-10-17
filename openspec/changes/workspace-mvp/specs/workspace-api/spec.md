@@ -6,16 +6,26 @@ Allow external clients and other workspace instances to discover and operate on 
 
 ## ADDED Requirements
 
-### Requirement: Local owner authentication
-The application SHALL bind to loopback by default and require owner authentication before reading workspace data or managing connections. Browser mutations MUST reject cross-origin requests and use protected same-origin sessions. Unrecognized host names MUST be rejected. Owner credentials MUST NOT be embedded in static assets or URLs.
+### Requirement: Owner authentication in each environment
+The application SHALL require owner authentication before reading workspace data or managing connections. Local use MUST bind to loopback by default; hosted use MUST require HTTPS with Secure session cookies. Browser mutations MUST reject cross-origin requests and use protected same-origin sessions. Owner credentials MUST NOT be embedded in static assets or URLs.
 
 #### Scenario: Unauthenticated access
 - **WHEN** a caller without a valid session or token requests workspace content
 - **THEN** the server rejects the request without returning personal data
 
 #### Scenario: Cross-site browser request
-- **WHEN** another website attempts an authenticated browser mutation or uses an unrecognized Host header
+- **WHEN** another website attempts an authenticated browser mutation or a request supplies a Host header inconsistent with the served origin
 - **THEN** the request is rejected without changing the workspace
+
+#### Scenario: Hosted deployment has no owner secret
+- **WHEN** a deployed instance has a missing, invalid, or known example owner secret
+- **THEN** protected routes fail closed with a configuration error and no workspace content is disclosed
+- **AND** a visitor cannot claim ownership through a public setup endpoint
+
+#### Scenario: Hosted session protection
+- **WHEN** the owner logs into the hosted HTTPS origin
+- **THEN** the session cookie is Secure, HttpOnly, and SameSite=Strict
+- **AND** logout or owner-secret rotation invalidates the affected sessions
 
 ### Requirement: Scoped external tokens
 The owner SHALL be able to issue and revoke bearer tokens with any subset of `workspace:read`, `items:write`, and `schema:write`. External tokens MUST NOT manage credentials, subscriptions, export, or restore. Revocation SHALL take effect on the next request. Token secrets MUST not be retrievable after issuance or stored in plaintext.
@@ -66,7 +76,7 @@ The API SHALL enforce documented limits on request bytes, string lengths, field 
 - **THEN** the server returns a size or validation error and persists neither an item change nor a success event
 
 ### Requirement: Integration documentation
-The application SHALL provide an API contract and runnable examples for discovery, scoped item access, rename compatibility, webhook verification, and connecting two local instances. Documentation MUST distinguish authenticated local HTTP access from public HTTPS webhook delivery and MUST NOT claim MCP, ACP, synchronization, or remote reachability is built in.
+The application SHALL provide an API contract and runnable examples for discovery, scoped item access, rename compatibility, webhook verification, and connecting independently configured instances. Documentation MUST distinguish loopback local HTTP from hosted HTTPS and MUST NOT claim MCP, ACP, or automatic local/cloud synchronization is built in.
 
 #### Scenario: Connect an external script
 - **WHEN** an owner follows the documented example using a scoped token

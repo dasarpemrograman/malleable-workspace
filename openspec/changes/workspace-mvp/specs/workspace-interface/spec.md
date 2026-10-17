@@ -58,11 +58,16 @@ The interface SHALL persist view mode, selected type, and board grouping indepen
 - **THEN** the saved view and grouping are restored when their definitions are still valid
 
 ### Requirement: Connection management
-The owner SHALL be able to create and revoke scoped API tokens, configure and disable webhook subscriptions, inspect delivery status, and retry failed deliveries. Newly generated secrets MUST be shown only at creation and excluded from subsequent listings. The UI SHALL explain that API access is local unless the owner separately provides network access.
+The owner SHALL be able to create and revoke scoped API tokens, configure and disable webhook subscriptions, inspect delivery status, and retry failed deliveries. Newly generated secrets MUST be shown only at creation and excluded from subsequent listings. The UI SHALL display the current API base URL and distinguish loopback-only local use from authenticated hosted HTTPS access.
 
 #### Scenario: Configure an external receiver
 - **WHEN** the owner registers an eligible HTTPS webhook URL
 - **THEN** the interface shows the subscription, provides its signing secret once, and later displays delivery outcomes
+
+#### Scenario: Hosted connection instructions
+- **WHEN** the owner opens connection settings on a deployed instance
+- **THEN** examples use that instance's HTTPS API URL and require a scoped bearer token
+- **AND** the interface does not suggest the local development workspace is synchronized with it
 
 ### Requirement: Accessible narrow-screen operation
 The core item, schema, and connection flows SHALL work with keyboard controls and at a 360-pixel viewport width. Inputs MUST have accessible names, dialogs MUST manage focus, and loading, success, and failure states MUST be distinguishable without relying only on color.

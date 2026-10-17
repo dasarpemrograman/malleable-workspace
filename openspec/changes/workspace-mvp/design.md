@@ -2,142 +2,144 @@
 
 ## Context
 
-See `proposal.md` for motivation and product scope. Inspection found only the OpenSpec dependency, generated agent skills, and setup documentation; there are no runtime modules, tests, or existing capability specs. This is a new local application, not a migration of an existing product.
+See `proposal.md` for the MVP and `specs/workspace-deployment/spec.md` for the requested deployment behavior. The repository contains OpenSpec tooling and unimplemented planning artifacts only. The previous Fastify/native SQLite design was never built; this revision replaces it before implementation.
 
-The user requested the proposal before implementation. All architecture and dependency choices below are proposed. This change's implementation remains unstarted.
+Cloudflare Workers is now the selected runtime for both hosted and local use. All choices below remain proposed. This turn edits planning artifacts only: no dependencies, Wrangler configuration, runtime code, public repository, or cloud resources are created.
 
 ## Goals / Non-Goals
 
-**Goals:** keep identity and authorization independent of presentation; make every mutation available through one validated domain operation; commit data and outbound intent atomically; keep operation practical for a single local user.
+**Goals:** one Worker application and storage model in both environments; a short guided deployment; no Cloudflare login for local operation; stable resource identities and domain behavior; durable delivery without an always-running process.
 
-**Non-Goals:** a universal ontology, executable user code, distributed consistency, automatic schema translation, or transparent remote access. A compatible rename and a change of meaning are different operations; this MVP supports renames and additive structure, not arbitrary semantic migration.
+**Non-Goals:** a standalone Node backend, automatic local/cloud synchronization, multi-tenant SaaS, browser-offline editing against a hosted workspace, or provider-independent backend deployment. Local offline use means running the Workers development runtime locally after dependencies and secrets are installed.
 
 ## Decisions
 
-### 1. One local process, one same-origin browser application
+### 1. Worker entry point, static assets, and a single workspace object
 
-Use TypeScript, React, and Vite for the browser; Fastify for the HTTP server; SQLite through `better-sqlite3` for persistence; and shared runtime validation with Zod. Target Node.js 24 LTS for the application. This raises the application's runtime floor from the repository's current tooling-only Node.js minimum; implementation must update package metadata and documentation together.
+Use TypeScript and React with Vite to build the browser assets, a Workers `fetch` entry point for routing, and Zod for shared validation. Use standard Request/Response and Web Crypto APIs, not Fastify, Node HTTP servers, `better-sqlite3`, filesystem persistence, or a Node background daemon. Node.js 24 is the tooling target, not the production execution environment; update the tooling engine declaration during implementation.
 
-During development, Vite proxies application requests to the local server. Production serves built assets and the API from one loopback origin. No runtime CDN, third-party login, analytics service, or model provider is required. Use locally packaged assets and system fonts.
+The Worker serves assets through an `ASSETS` binding and forwards API/authentication/owner-management requests to `WORKSPACE`, a SQLite-backed Durable Object class. Route all workspace calls to a fixed deployment-local object name such as `primary`. Keep its internal storage identity separate from the public workspace UUID so snapshot restore does not change routing. Never derive new object names from unauthenticated request paths or caller-provided workspace IDs.
 
-Proposed layout: `src/server/` for HTTP and delivery, `src/domain/` for operations and schemas, `src/storage/` for SQLite and migrations, `src/client/` for React, `tests/` for behavior checks, and `docs/` for the API and operator guide.
+Configure Worker-first routing for protected route prefixes so missing API routes return JSON errors, not the SPA fallback. Public static assets contain no secrets or user content. Authenticated responses use `Cache-Control: no-store`. The Durable Object is not directly exposed as a public endpoint; it validates sessions/scopes itself rather than trusting client-supplied principal headers.
 
-Alternatives: browser-only storage makes external inbound access awkward; an Electron shell adds packaging before the integration model is proven; a hosted service adds deployment and account requirements. A JSON file is simpler initially but provides weaker transaction and queue guarantees than SQLite.
+Proposed layout: `src/worker/` for routing and binding types, `src/workspace/` for the Durable Object and SQL migrations, `src/domain/` for validation and commands, `src/client/` for React, `tests/` for runtime/browser checks, and `docs/` for operation and API guidance.
 
-### 2. Separate stable content from mutable presentation
+**Alternative:** D1 plus Queues would work but split the workspace, outbox, and scheduling across more products. A SQLite-backed Durable Object colocates the transactions and alarm state needed by this personal workspace. Separate Node/local and Workers/cloud backends would multiply compatibility work.
 
-Use UUIDs for workspace, type, field, option, item, view, token, subscription, event, and delivery IDs. Display names are never foreign keys or property names in the published contract. Internal SQLite migration version, public API version, event envelope version, export format version, and workspace schema revision are separate values.
+### 2. Wrangler is the source of deployment and local-runtime configuration
 
-Persist these logical records:
+During implementation, add `wrangler.jsonc` with a stable Worker name, pinned compatibility date, `ASSETS`, the `WORKSPACE` class binding, and the initial class migration using `new_sqlite_classes`. Class migration tags and the exported class name must remain stable across deployments. No D1, KV, R2, Queues, VPC, private-network, AI, or external service binding is required for the MVP.
 
-| Record | Key content |
-| --- | --- |
-| Workspace | ID, display name, schema revision, pristine marker |
-| Type | ID, display name, revision |
-| Field | ID, type ID, display name, immutable kind, archived flag, revision |
-| Select option | ID, field ID, display name, revision |
-| Item | ID, immutable type ID, title, body, values keyed by field ID, archive flag, revision, timestamps |
-| View | ID, mode, selected type ID, optional grouping field ID, revision |
-| Access token | ID, display name, secret digest, scopes, revocation time |
-| Subscription | ID, URL, selected event families, signing secret, enabled flag |
-| Event / delivery | Immutable envelope and body; per-subscription state, attempts, next attempt time |
+Keep Vite as the client asset builder. Make the documented local command build the client and invoke Wrangler local development with loopback binding and an explicit `.wrangler/state` persistence directory. The intended workflow is `npm ci`, `npm run setup:local`, then `npm run dev`; setup generates a random local owner key without cloud calls. Expose a separate dry-run bundle check and a deployment command that builds assets before `wrangler deploy`. Configure the build/deploy scripts so the guided Cloudflare flow detects them correctly.
 
-Start with one editable type named Item, no fields, and no sample content. All custom fields are optional. Select values contain option IDs, numbers must be finite, and absent values are different from false or zero. Item titles are required after trimming; bodies remain plain text.
+Wrangler and the Cloudflare Vite plugin both use Miniflare/workerd; Wrangler is selected here to keep one explicit configuration and persistence path. A future optional Vite-plugin HMR workflow must not become another backend or silently use different local state.
 
-Field kind and an existing item's type cannot change in the MVP. Archive fields instead of dropping them. Store archived definitions and values, return them in schema/item API reads, and reject writes to archived fields. Unarchive restores editing. Select options can be added and renamed; removing options and permanently deleting schema are unavailable. Renaming a label never changes identity or coerces values.
+Local bindings remain simulated; do not set `remote: true` or use `--remote` in the normal workflow. Keep `.wrangler/`, `.dev.vars`, generated bundles, snapshots, and secrets out of Git and uploaded assets. A local runtime restart keeps the same storage directory. Separate checkout/state directories are separate workspaces.
 
-Alternatives: name-keyed JSON is easy to inspect but breaks renames; requiring every workspace to share fixed Task/Project models undermines malleability; unrestricted type conversion requires explicit migration contracts and belongs in a later proposal.
+**Alternative:** remote development would upload code and use cloud resources, which does not meet the local requirement. A second local SQL adapter is unnecessary because Wrangler simulates the actual Durable Object APIs.
 
-### 3. Shared operations and explicit revisions
+### 3. Template deployment and explicit owner setup
 
-Domain operations accept a principal and validated command; adapters do not write directly to storage. Check scope, expected resource revision, resource ownership, active field definitions, and value kinds before opening the write transaction. Use parameterized SQL. Recheck the expected revision within the transaction, persist the new revision and the event/outbox rows, and return the committed result.
+During implementation, add the documented Deploy to Cloudflare button pointing at the actual public GitHub/GitLab template URL. The flow clones the source for the user, builds/deploys it, and provisions the declared Durable Object binding. Include the class migration and stable default binding names; no manual database ID or D1 migration step is needed.
 
-Use a resource's `revision` in PATCH bodies, including schema resources. Return HTTP 409 with `revision_conflict` on mismatch. Unknown resources return 404; validation returns 422; malformed JSON returns 400; authentication returns 401; scope denial returns 403; oversized requests return 413. Errors use `{ "error": { "code", "message", "details" } }` and do not include credentials or stack traces.
+Provide `.dev.vars.example` with a non-working `OWNER_KEY` placeholder and a package-level Cloudflare binding description telling deployers to generate a unique random secret. The deploy flow uses the example file to request the Worker secret. Reject missing, example, or insufficiently strong owner keys at runtime; an accidentally deployed unconfigured Worker never becomes publicly writable. Local setup writes an owner-only `.dev.vars` file and tells the user where to read it; it neither prints the secret in ordinary logs nor overwrites an existing key silently.
 
-The client refreshes current data after mutations and on window focus, and polls every five seconds while visible so external edits appear without a second transport. Preserve local drafts during refreshes and conflicts. No live multi-user editing is implied.
+Do not require a separate application account, OAuth provider, Cloudflare Access configuration, or custom domain. The deployed workers.dev HTTPS origin is sufficient. The owner supplies a key through the login screen; no public setup or first-visitor claim endpoint exists.
 
-Alternatives: separate UI-only commands can drift from integration semantics; last-write-wins can silently discard local or external edits.
+The repo has no GitHub remote today and repository creation was previously denied. A working public template URL is a release prerequisite, not something this proposal can fabricate. Do not publish source or create/deploy resources during planning. Implementation can prepare the template locally, but the live button acceptance task remains unfinished until the real source and authorized deployment account are available. A dry run alone does not prove the guided deployment works.
 
-### 4. Small version 1 API surface
+**Alternative:** unauthenticated setup after deployment creates an ownership race. Requiring Cloudflare Access would add account/policy setup before an owner can use the template.
 
-| Surface | Operations |
-| --- | --- |
-| `/api/v1/capabilities` | GET workspace identity, versions, kinds, operations, limits |
-| `/api/v1/schema` | GET types, fields, options, archived markers, revisions |
-| `/api/v1/types` and `/:id` | POST create, PATCH rename |
-| `/api/v1/fields` and `/:id` | POST create, PATCH rename/archive/restore |
-| `/api/v1/options` and `/:id` | POST create, PATCH rename |
-| `/api/v1/items` and `/:id` | GET list/read, POST create, PATCH content/archive/restore |
-| Owner session routes | Login, logout, current session |
-| Owner management routes | Views, tokens, subscriptions, delivery status/retry, snapshot export/restore |
+### 4. Durable SQLite records and shared transactions
 
-Publish an OpenAPI document for public routes and examples using curl and a small script. Mutation bodies reject unknown top-level keys, but field-value keys are validated IDs and stored without prototype-sensitive merging. `schema:write` does not imply read or item-write access. Any scope combination can be granted deliberately; write-only clients receive the result of their own authorized mutation, not general read access.
+Preserve the existing model: immutable UUIDs for workspace, items, types, fields, options, views, tokens, subscriptions, events, and deliveries. Names are labels, never foreign keys. Persist types, immutable-kind fields, option IDs, items with plain-text bodies and ID-keyed values, view preferences, token digests/scopes, sessions, subscriptions, and delivery state in the object's SQL storage. Start with one editable Item type, no fields, and no records.
 
-List responses use `{ items, nextCursor }`; page size defaults to 50 and is capped at 100. Use deterministic `(createdAt, id)` ordering and an opaque cursor validated against the active filters. Pagination is a traversal of current state, not a cross-request snapshot. Document that concurrent modifications can affect membership.
+Keep four optional field kinds: text, finite number, checkbox, and single select. Distinguish unset, false, and zero. Item type and field kind cannot change after creation. Archive fields/items without deleting content; archived fields remain discoverable and reject writes until restored. Options can be added and renamed but not removed. Use expected revisions for PATCH operations and reject stale edits atomically.
 
-Initial published limits: 1 MiB ordinary request bodies, 240-character titles and display names, 100,000-character item bodies, 100 fields per type, 100 options per select field, 10,000-character text values, and 2,048-character webhook URLs. Snapshot upload is separately capped at 50 MiB with a full preflight validation. Authentication attempts are limited to 10 failed attempts per minute per local client address. These values become part of capabilities and test cases.
+Use parameterized `ctx.storage.sql.exec()` calls within storage transactions. SQL transaction statements are not the transaction API; use `ctx.storage.transaction()` when including alarm updates and the appropriate synchronous transaction API for synchronous SQL-only work. Revalidate resource revisions and schema inside the transaction. Commit content, immutable event bytes, delivery rows, and the required next alarm together. Do not await external network calls inside a transaction or rely on in-memory state for durability.
 
-Version 1's envelope and operation semantics stay stable through supported customization. Schema changes increment schema revision, not API major version. A future breaking field-conversion or executable extension must introduce explicit migration/capability semantics rather than silently reinterpreting a v1 value.
+Use a bounded alarm pump rather than one timer per delivery: schedule the earliest due pending work. Changes that enqueue deliveries must not move an earlier alarm later. Initialization uses durable migration state and `blockConcurrencyWhile` as appropriate; it must not overwrite a pending alarm unconditionally when an evicted object restarts.
 
-### 5. Local owner access and scoped integrations
+**Alternative:** ordinary isolate memory and `setTimeout` disappear on eviction; a post-response promise does not provide a durable queue. Stable IDs remain the integration foundation independently of where the object runs.
 
-On first launch, generate an owner key in a local file with owner-only permissions. The server stores its digest, accepts it through a login form, and issues an HttpOnly, SameSite=Strict session cookie. Session state survives only as needed for normal operation and is never exported. Owner actions require this session; external bearer tokens cannot access owner management routes. Keep generated secrets out of URLs, bundles, source control, and application logs.
+### 5. Authentication and the public API in local and hosted modes
 
-Bind to `127.0.0.1` by default, allow only explicitly configured loopback host names and the configured port, require the configured Origin on browser mutations, and do not enable cross-origin API access. CLI clients without an Origin must use bearer authentication; they cannot bypass owner-session origin checks. Rate-limit login attempts. Changing network exposure is not a supported deployment mode in this release.
+Use the same scoped bearer tokens and owner-session authorization model in both modes. The environment supplies `OWNER_KEY`; do not store the plaintext owner key in SQL. Store random external-token and session digests, not their secrets. Use expiring host-only HttpOnly/SameSite=Strict cookies; require Secure on hosted HTTPS and permit local HTTP only on loopback. Logout removes the session. Tie each session to a key-derived credential epoch so owner-key rotation invalidates existing sessions; document that separate scoped integration tokens are revoked explicitly.
 
-Issue cryptographically random API tokens, show them once, store only digests, and compare secrets without leaking partial matches. Signing secrets must remain recoverable to sign webhooks; store them only in the protected local data store, never in read responses. Set the data directory to owner-only access, including SQLite sidecar files and the owner key. Local disk encryption is the operating system's responsibility.
+Fail closed when the owner secret is not configured. Require browser mutation Origin to equal the request's served origin, reject Host/URL inconsistencies, and never infer trusted origins from caller-supplied forwarded headers. Local Wrangler binds only to loopback by default. Hosted routing supplies the deployed HTTPS origin; a configured custom domain can serve the same application without replacing its data namespace. Do not enable cross-origin browser API access. No-Origin CLI requests must authenticate with a scoped bearer token and cannot use that exception for owner-session actions.
 
-Alternatives: an unauthenticated loopback server is vulnerable to browser-mediated requests; a full OAuth provider adds substantial machinery before remote multi-user use exists. Separate read/write/schema scopes bound what locally authorized tools can do.
+Rate-limit login attempts using durable state: 10 failed attempts per minute per client identity plus a bounded aggregate limit to resist distributed attempts. Hosted client identity uses Cloudflare-provided request metadata, never an untrusted forwarded address; local mode uses its local identity. Bound and expire rate-limit records. Return no personal data in errors or health/configuration responses.
 
-### 6. Transactional outbound events and bounded delivery
+Keep `/api/v1/capabilities`, `/schema`, `/types`, `/fields`, `/options`, and `/items` as proposed. Scopes are independently grantable `workspace:read`, `items:write`, and `schema:write`. External tokens cannot manage credentials, views, subscriptions, snapshots, or restore. Write-only tokens receive their authorized mutation result, not general read access.
 
-Each item/schema transaction inserts an immutable event plus delivery rows for matching currently enabled subscriptions. Event types are `item.created`, `item.updated`, `item.archived`, `item.restored`, `type.created`, `type.updated`, `field.created`, `field.updated`, `field.archived`, `field.restored`, `option.created`, and `option.updated`. Each envelope contains `version`, `id`, `workspaceId`, `type`, `resourceId`, `resourceRevision`, `occurredAt`, `actor`, and `data`. `data` contains the post-mutation resource snapshot, not unrelated workspace content. Owner view/token/subscription actions do not generate content events.
+API version, schema revision, export version, event version, and SQL migration version remain separate. Rename/addition/archive operations do not bump API major version. Use 409 for stale revisions, 422 for invalid values, 400 for malformed requests, 401 for failed authentication, 403 for insufficient scope, 404 for missing resources, and 413 for oversized bodies. Document machine-readable error codes.
 
-Worker delivery is independent of HTTP mutation responses. Use a single worker with concurrency two, transactional claiming, and a recovery path for interrupted attempts on startup. Preserve committed event bytes for replay. Keep a bounded response diagnostic (status/error category, not arbitrary receiver response bodies).
+Retain deterministic `(createdAt, id)` cursor pagination with default page size 50 and maximum 100, title/body search, type filtering, and optional archived inclusion. A cursor is validated against its filters; concurrent edits are not a snapshot guarantee. Enforce the previous ordinary limits: 1 MiB request bodies, 240-character titles/names, 100,000-character bodies, 100 fields per type, 100 options per field, 10,000-character text values, and 2,048-character webhook URLs. Reject unsupported prototype-sensitive properties instead of merging arbitrary object keys. Cap snapshots at 10 MiB to leave headroom for validation/restore within Workers resource constraints; make this explicit in capabilities and tests.
 
-Use headers `X-Workspace-Event-Id`, `X-Workspace-Timestamp`, and `X-Workspace-Signature: sha256=<hex>`. Sign `timestamp + "." + rawBody` with the subscription secret. Timestamp is Unix seconds at attempt time. Receiver examples compare signatures in constant time, enforce a five-minute timestamp tolerance, and deduplicate on `(workspaceId, eventId)`.
+### 6. Alarm-driven webhooks with an explicit destination boundary
 
-Timeout each request after 10 seconds and allow three attempts per cycle: immediately, then after 10 seconds, then after 60 seconds. Only 2xx is success. The owner can retry a failed delivery as another bounded cycle, with the same event ID/body and fresh timestamps. No ordering guarantee, exactly-once guarantee, or automatic peer forwarding is offered. External handlers must avoid feedback loops; this MVP does not automatically copy events into another workspace.
+Retain immutable events with `version`, `id`, `workspaceId`, `type`, `resourceId`, `resourceRevision`, `occurredAt`, non-secret `actor`, and `data` containing the post-mutation resource snapshot. Event types cover item create/update/archive/restore, type create/update, field create/update/archive/restore, and option create/update. Token/view/subscription management does not emit content events. Subscription selection explicitly covers item events, schema events, or both.
 
-For HTTPS destinations, reject URL credentials/fragments, resolve DNS, reject any non-public IPv4/IPv6 result including mapped IPv4 forms, and connect to a validated address while preserving the hostname for TLS/SNI verification. Revalidate and pin for every attempt, do not follow redirects, and use a tested address classification library rather than ad hoc string matching. An environment proxy must enforce equivalent destination restrictions; do not bypass required proxy policy. Surface inability to deliver safely as a failed attempt.
+The alarm handler reserves due attempts transactionally before networking, performs at most two concurrent fetches in a bounded batch, then persists outcomes and schedules remaining work. Reserve attempt numbers and a lease deadline durably. An interrupted attempt consumes its slot; after its lease expires, a later attempt may resend the same event. Scheduling uses the earliest pending due time or in-flight lease expiry. Catch normal delivery failures and persist/reschedule them; platform alarm retries must resume durable attempt state rather than reset counters.
 
-Alternatives: synchronous webhooks make offline editing unreliable; an external message broker adds an operational dependency; arbitrary URL fetches can reach private services. Public HTTPS receivers and local inbound API clients prove the two directions without shipping networking infrastructure.
+Keep three automatic request slots per cycle, a 10-second request timeout, and retry delays of 10 then 60 seconds. Only 2xx succeeds. The owner can retry an exhausted failed delivery as a new bounded cycle. Disable prevents future claims but cannot undo an in-flight request. Delays are earliest eligible times, not precise execution guarantees. Runtime crashes can leave an uncertain receipt; document duplicate-capable best-effort delivery within bounded attempts, not guaranteed receipt or exactly once. Once slots are exhausted no automatic alarm retry may issue a fourth request.
 
-### 7. Views remain projections
+Sign `timestamp + "." + rawBody` with Web Crypto HMAC-SHA256. Keep the headers `X-Workspace-Event-Id`, `X-Workspace-Timestamp`, and `X-Workspace-Signature: sha256=<hex>`. Retry preserves event ID/body and creates a new timestamp/signature. Receiver examples use constant-time verification, five-minute timestamp tolerance, and `(workspaceId, eventId)` deduplication. Store signing keys in private object storage, disclose them only at subscription creation, and never include them in logs/exports.
 
-The browser shows a restrained collection surface with a prominent create action, search, type filter, view switch, and settings. The item editor renders fields from schema. Settings provide separate schema, connections, and recovery screens so implementation details do not fill normal item flows.
+The previous Node design's arbitrary DNS lookup and connection pinning is not portable to Workers fetch. Replace that unimplemented mechanism explicitly: `WEBHOOK_ALLOWED_HOSTS` is an operator-controlled exact DNS-hostname allowlist, empty by default, not editable by external tokens or ordinary subscription requests. Permit only HTTPS on port 443; reject IP literals, localhost/local-domain names, URL credentials/fragments, redirects, and self-targeting protected application origins. Check the allowlist every attempt. Owners must configure trusted public receivers deliberately; local delivery is not an untrusted-URL fetch service.
 
-A board selects one type and one of its active select fields. Columns reference option IDs and include Unset. An explicit move control supports keyboard and touch; dragging is optional, not required. The list remains available if the grouping field is archived. Persist view preferences without changing item semantics. Make dialogs focus-managed and controls usable at 360 pixels.
+Hosted delivery uses global fetch with `global_fetch_strictly_public`, normal TLS verification, and manual redirect handling. Bind no VPC/service/private network egress and set no private-origin/resolve overrides. This flag enforces public routing for a Worker's zone; it is not a general DNS-pinning API. Local workerd does not inherit the hosted network boundary, so document the trust placed in the operator's allowlisted hostname/DNS and test local URL-policy enforcement separately. No claim of arbitrary-host DNS/IP pinning parity is made. Test receivers use injected/mocked transport without relaxing production URL rules.
 
-Alternatives: hard-coded status columns make the first board a task manager; mandatory drag-and-drop excludes keyboard and some touch usage; an arbitrary canvas requires a new layout model before core interoperability is tested.
+**Alternative:** keeping a Node-specific pinned-connection promise would require a second egress implementation or relay. Trusted explicit destinations plus public Workers routing fit a single-owner MVP with less infrastructure. Stronger hostile-URL/DNS isolation would need a separate egress design.
 
-### 8. Export, restore, and migration
+### 7. UI and portable recovery remain platform-neutral
 
-Use numbered SQLite migrations with a recorded version; take a consistent SQLite backup before applying any migration to an existing database. Never auto-downgrade. Do not commit data files, owner keys, exports, or credentials.
+Keep schema-driven item editing, search/filter, list and select-field board views, Unset columns, keyboard/touch move controls, and archived-grouping fallback. Saved views are projections, not integration schemas. Refresh after mutations, on focus, and every five seconds while visible without replacing unsaved drafts. Show conflicts explicitly. Core screens work at 360 pixels and via keyboard.
 
-Export uses a consistent read transaction and a versioned JSON envelope containing workspace identity, schema, items, archived content, and view preferences. Exclude tokens, sessions, subscriptions, event/delivery history, and owner credentials. Validate references, value kinds, IDs, counts, and format version before restore.
+Connections settings show the current environment and API base URL: loopback HTTP locally, the actual HTTPS origin when hosted. Explain event content disclosure, hostname allowlist configuration, scoped tokens, delivery outcomes, and lack of automatic synchronization. Hosted services can call the hosted API directly with a token; local tools call the loopback API. Two instances remain separate peers; examples do not auto-forward all incoming events and create loops.
 
-Restoration is allowed only while a fresh instance's pristine marker remains true: any owner-created content, schema change, saved view change, token issuance, or subscription creation makes it non-pristine. Login and export do not. Replace fresh defaults atomically, preserve exported resource IDs, increment no restored resource revisions, mark non-pristine, and keep the target instance's newly generated owner credential. No old connections resume. As initialization, restoration creates a local `workspace.restored` audit event, not a replay of historical item events or deliveries. Cloning a snapshot is not a federation mechanism; retire the old instance before treating a restore as its replacement.
+Export a consistent versioned JSON snapshot containing workspace UUID, types/fields/options, items and archived values, and saved views. Exclude owner key, tokens, sessions, subscriptions, and event/delivery history. Fully validate the supported format, IDs, references, values, counts, and 10 MiB limit before atomic replacement.
 
-Alternatives: restoring into a populated workspace requires merge/conflict semantics; copying credentials silently could reconnect the wrong instance to external services.
+Restore only when the pristine marker remains true: owner-created items, schema changes, view changes, token issuance, or subscriptions mark it non-pristine; login/export do not. Retain the destination's environment-provided owner key and preserve exported IDs/revisions. Create one local `workspace.restored` audit event without replaying historical deliveries. Retire the source when performing an identity-preserving replacement; a fork is not a synchronized copy. Export/restore works in either direction without access to raw Durable Object database files.
+
+### 8. Migrations, release checks, and recovery
+
+Separate append-only Wrangler Durable Object class migration tags from transactional per-object application schema migrations. Reuse the same class binding, namespace, and fixed object name across compatible redeployments. Initialize a fresh namespace only for a deliberately separate instance.
+
+Prefer additive SQL migrations so the previous code remains readable during rollback. Before an existing-schema upgrade, record a recoverable checkpoint: a hosted SQLite Durable Object PITR bookmark where supported, or a portable snapshot for local recovery. Document hosted bookmarks separately from the guaranteed cross-environment snapshot path; do not promise local PITR parity. Never silently downgrade a newer application schema. Incompatible rollback requires compatible code and an explicit recovery operation, not merely redeploying old JavaScript.
+
+Use Workers runtime tests with simulated bindings and controlled alarm execution, plus browser tests against Wrangler local development. Deployment acceptance additionally requires a real Cloudflare account and public template source: provisioning, fail-closed startup, scoped HTTPS API use, redeploy preservation, and alarm recovery. Report a missing account/source as an uncompleted live check, not a passed dry run.
 
 ## Risks / Trade-offs
 
-- Limited malleability: stable IDs handle names and projections, not arbitrary changes of meaning. Reject field-kind/type reassignment and keep migration work explicit.
-- Single SQLite writer and synchronous driver: keep transactions short and delivery outside them; this is a personal workspace, not a high-concurrency service.
-- Native SQLite dependency: test installation on the documented Node/platform combination; packaging beyond the development/start workflow is deferred.
-- Full resource snapshots in webhooks disclose content to configured receivers: explain this before subscription creation and require explicit event-family selection.
-- Duplicate deliveries and feedback loops: document event deduplication and source identity; do not auto-forward peer events.
-- Offline delivery eventually exhausts its budget: show failure and allow manual retry; do not promise automatic indefinite catch-up.
-- Events and delivery history grow over time: expose a documented local-storage limitation for the MVP; retention/compaction requires a later proposal rather than silent event loss.
-- Local-server deployment limits reachability: tools on the same device can call it immediately; remote inbound connectivity requires a later supported deployment proposal.
-- Snapshot restore preserves identity: do not concurrently run restored copies as if they were a single synchronized workspace.
+- Cloudflare coupling: runtime/storage use Workers APIs; portable snapshots preserve data ownership, but provider-independent hosting is not part of this MVP.
+- Free/paid quotas and cost: SQLite-backed Durable Objects are available on both plans, but limits can reject work and usage can incur charges; link current official limits rather than promise unlimited free operation.
+- Object/storage growth and compute limits: keep scans, batches, retry budgets, payloads, and snapshots bounded; document that event history retention/compaction is deferred.
+- Local persistence is a development-runtime feature: keep the persistence directory intact and use snapshots for recovery/transfer; deleting `.wrangler/state` deletes that local workspace.
+- Local/cloud divergence: separate namespaces and secrets are intentional; moving content requires explicit export/restore, with no implied offline browser synchronization.
+- Hostname trust in local webhook delivery: only operators choose allowlisted receivers; public Workers routing and local egress are different trust boundaries, and neither is described as Node-style DNS pinning.
+- Public deployment bootstrap: a Worker without a valid owner secret stays locked; there is no insecure shared default or first-visitor owner claim.
+- Bounded alarm retries: duplicate execution and unknown receipt are possible; durable budgets and event IDs make recovery observable and deduplication possible.
+- A deploy button needs public source: repository creation/publication and an authorized account remain prerequisites to live release verification.
 
 ## Migration Plan
 
-1. During implementation, add the application runtime floor, dependency lockfile changes, startup scripts, schema migration 1, and ignored local data directory.
-2. Start a fresh instance, exercise the cross-surface acceptance scenario, and verify restart persistence and empty-instance recovery.
-3. Document local startup, first-owner login, token issuance, webhook signature verification, limits, and the boundary around remote access.
-4. Roll back a pre-release build by stopping it and restoring the matching database backup before starting its predecessor. Exports are a portable recovery path, not an automatic schema downgrade.
+1. Implement the Worker, Durable Object, local commands, owner-secret setup, and static assets without introducing a second server/storage adapter.
+2. Verify clean local startup with no Cloudflare credentials, offline editing, restart persistence, API rename compatibility, and controlled alarm recovery.
+3. Prepare the template binding/class migration, secret example/description, build/deploy scripts, and documentation. Publish a real button only when an authorized public source exists.
+4. On an authorized Cloudflare account, verify the guided fresh deployment, lockout without a secret, owner login, scoped API and webhook flows, and state retention across redeployments.
+5. Verify local-to-hosted and hosted-to-local snapshot restoration into pristine instances; document key/subscription exclusion and source retirement.
+6. Keep old class migrations and namespaces intact. For rollback, deploy schema-compatible code or perform explicit documented checkpoint recovery; never reset an existing namespace as an upgrade shortcut.
 
-No existing user database or production deployment exists today. GitHub repository creation remains blocked by integration permissions and is not a prerequisite for local implementation.
+## Sources
+
+Official documentation inspected for this proposal on 2026-10-17:
+
+- [Deploy to Cloudflare buttons](https://developers.cloudflare.com/workers/platform/deploy-buttons/): public source template, guided provisioning, scripts, and secret examples.
+- [Workers local development](https://developers.cloudflare.com/workers/local-development/): Miniflare/workerd execution, local simulated bindings, and separation from remote bindings.
+- [Cloudflare Vite plugin](https://developers.cloudflare.com/workers/vite-plugin/): an alternative supported local frontend workflow.
+- [Durable Object storage](https://developers.cloudflare.com/durable-objects/best-practices/access-durable-objects-storage/): persisted private storage and SQLite class migration declarations.
+- [SQLite storage API](https://developers.cloudflare.com/durable-objects/api/sqlite-storage-api/): transactions and hosted point-in-time recovery.
+- [Durable Object alarms](https://developers.cloudflare.com/durable-objects/api/alarms/): durable scheduling, duplicate execution, and automatic handler retries.
+- [Global fetch public routing](https://developers.cloudflare.com/workers/configuration/compatibility-flags/#global-fetch-strictly-public): public routing behavior for same-zone subrequests.
+- [Durable Objects pricing](https://developers.cloudflare.com/durable-objects/platform/pricing/): plan availability and quota/cost considerations.

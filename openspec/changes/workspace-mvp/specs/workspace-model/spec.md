@@ -7,7 +7,7 @@ Let an owner reshape personal information without losing content or changing the
 ## ADDED Requirements
 
 ### Requirement: Minimal offline workspace
-The system SHALL initialize one workspace containing one editable item type, no custom fields, and no items. Local reading, editing, and schema customization MUST work without an internet connection or external account.
+The system SHALL initialize one workspace containing one editable item type, no custom fields, and no items in each local or hosted environment. Once dependencies and the owner secret are configured, local reading, editing, and schema customization MUST work without an internet connection or Cloudflare login.
 
 #### Scenario: First offline launch
 - **WHEN** the owner starts a fresh instance with networking unavailable
@@ -59,11 +59,15 @@ The system SHALL require the current revision when updating an existing item or 
 - **AND** the client can reload the current revision before retrying
 
 ### Requirement: Durable commits
-The system SHALL persist accepted content and schema changes across process restarts. A mutation and its corresponding change event MUST be committed together or neither SHALL become visible.
+The system SHALL persist accepted content and schema changes across local runtime restarts and hosted object eviction or redeployment using the same namespace. A mutation and its corresponding change event MUST be committed together or neither SHALL become visible.
 
 #### Scenario: Restart after a successful edit
 - **WHEN** the server restarts after acknowledging an edit
 - **THEN** the edit and its event remain available
+
+#### Scenario: Hosted object eviction
+- **WHEN** a hosted workspace object is evicted and later recreated from its persistent storage
+- **THEN** acknowledged content, schema, revisions, and events remain available
 
 ### Requirement: Portable export and restoration
 The owner SHALL be able to export a versioned JSON snapshot containing workspace identity, schema, items, archived content, and saved views. Credentials, sessions, webhook subscriptions, and delivery history MUST be excluded. Restoration SHALL accept only a valid supported snapshot into an instance with no owner-created data and SHALL preserve exported IDs atomically.
@@ -72,6 +76,11 @@ The owner SHALL be able to export a versioned JSON snapshot containing workspace
 - **WHEN** the owner restores a valid export into a fresh instance
 - **THEN** the exported schema, items, views, values, and IDs replace the fresh defaults
 - **AND** restored connections require new credentials and explicit configuration
+
+#### Scenario: Transfer between local and hosted environments
+- **WHEN** the owner exports a local workspace and restores it into a pristine hosted instance, or performs the reverse transfer
+- **THEN** supported content, schema, views, and IDs are preserved
+- **AND** later changes in either environment are not automatically synchronized
 
 #### Scenario: Reject an unsafe restore
 - **WHEN** a restore has invalid references, an unsupported format version, or targets an instance with owner-created data

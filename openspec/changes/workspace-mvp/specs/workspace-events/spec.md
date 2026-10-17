@@ -22,11 +22,15 @@ Only the owner SHALL configure or disable subscriptions. A subscription MUST exp
 - **THEN** only the item event is queued for that subscription
 
 ### Requirement: Eligible receiver destinations
-Webhook delivery SHALL accept only HTTPS destinations on public addresses with valid TLS. Loopback, private, link-local, reserved, and otherwise non-public destinations MUST be rejected, including after DNS resolution. Redirects MUST NOT be followed. Destination checks SHALL run for each attempt and connection MUST use an address that passed those checks.
+Webhook delivery SHALL accept only owner-configured HTTPS URLs on an operator's exact-host allowlist with valid TLS. IP literals, localhost names, URL credentials, non-443 ports, and redirects MUST be rejected. Hosted delivery MUST use Workers public fetch routing without private-network bindings or origin overrides. Local delivery SHALL target only operator-trusted hostnames; DNS/IP pinning is not guaranteed by this contract.
 
-#### Scenario: Reject an internal destination
-- **WHEN** the owner supplies a URL whose hostname resolves to a private or loopback address
-- **THEN** registration fails or delivery is blocked with a visible reason and no request reaches that address
+#### Scenario: Reject an ineligible destination
+- **WHEN** the owner supplies an IP-literal URL, a localhost name, or a hostname outside the configured allowlist
+- **THEN** registration or delivery fails visibly before an outbound request is issued
+
+#### Scenario: Allowlist changes after subscription creation
+- **WHEN** an operator removes a receiver hostname from the allowlist before the next attempt
+- **THEN** the next attempt is blocked without contacting that receiver
 
 #### Scenario: Receiver redirects to another service
 - **WHEN** a receiver returns a redirect
@@ -40,7 +44,7 @@ The system SHALL POST an event as JSON with an event ID, attempt timestamp, and 
 - **THEN** a valid delivery verifies and a modified body fails verification
 
 ### Requirement: Bounded retry and durable delivery state
-Delivery SHALL treat only HTTP 2xx as success. Each delivery cycle SHALL have at most three attempts with increasing delays and a timeout per attempt. Pending work MUST survive restart. Delivery is at least once; receivers MUST be told to deduplicate by workspace ID and event ID, and ordering MUST NOT be guaranteed.
+Delivery SHALL treat only HTTP 2xx as success. Each delivery cycle SHALL have at most three reserved attempts with increasing delays and a timeout per attempt. Pending work MUST survive local restarts and hosted eviction. Alarm retries MUST NOT reset delivery budgets. Delivery can duplicate; receivers MUST deduplicate by workspace ID and event ID, and ordering MUST NOT be guaranteed.
 
 #### Scenario: Temporary receiver failure
 - **WHEN** a receiver fails an attempt and later succeeds within the retry budget
@@ -53,6 +57,11 @@ Delivery SHALL treat only HTTP 2xx as success. Each delivery cycle SHALL have at
 #### Scenario: Restart around receiver acknowledgement
 - **WHEN** the server restarts after a receiver accepted a request but before success was recorded locally
 - **THEN** redelivery can occur with the same event ID so the receiver can deduplicate it
+
+#### Scenario: Duplicate alarm invocation
+- **WHEN** the runtime repeats an alarm handler after an interrupted delivery attempt
+- **THEN** durable attempt state prevents a fourth automatic request in the same cycle
+- **AND** exhausted or disabled deliveries are not sent again
 
 ### Requirement: Delivery observability and manual retry
 The owner SHALL be able to inspect event ID, destination, attempt count, timestamps, HTTP outcome or failure reason, and pending/succeeded/failed state. They SHALL be able to start a new bounded retry cycle for a failed delivery on an enabled subscription. Logs and responses MUST not expose signing secrets or authorization credentials.
