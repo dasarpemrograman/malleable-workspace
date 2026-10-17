@@ -13,6 +13,14 @@ OpenSpec 1.14.3 is installed as a project-local development dependency.
 Initialization created six Codex skills in `.agents/skills/` and retained
 `openspec/config.yaml`. Both change and specification inventories are empty.
 
+GitHub creation is pending: the authenticated GitHub integration rejected
+`createRepository` with `Resource not accessible by integration`. No remote is
+configured. After repository-creation permission is available, run:
+
+```sh
+gh repo create malleable-workspace --private --source=. --remote=origin --push
+```
+
 ## OpenSpec commands
 
 ```sh
