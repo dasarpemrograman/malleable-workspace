@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "malleable-workspace",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2026-10-17",
+  "compatibility_flags": ["global_fetch_strictly_public"],
+  "assets": {
+    "directory": "dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*", "/auth/*", "/owner/*"],
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "WORKSPACE", "class_name": "Workspace" }],
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Workspace"] }],
+  "vars": { "WEBHOOK_ALLOWED_HOSTS": "[]" },
+  "dev": { "ip": "127.0.0.1", "port": 8787 },
+  "observability": { "enabled": false },
+}

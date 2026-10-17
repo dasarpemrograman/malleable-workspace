@@ -4,3 +4,13 @@ node_modules/
 !.env.example
 *.log
 .DS_Store
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+.wrangler/
+.worker/
+dist/
+test-results/
+playwright-report/
+exports/
+worker-configuration.d.ts

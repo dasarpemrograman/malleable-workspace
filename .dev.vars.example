@@ -1,0 +1,3 @@
+# Generate a unique random owner key using: npm run setup:local
+# Deployment: supply your own 32-byte base64url key in the guided secret prompt.
+OWNER_KEY=REPLACE_WITH_A_RANDOM_32_BYTE_BASE64URL_KEY
