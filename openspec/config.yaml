@@ -1,0 +1,19 @@
+schema: spec-driven
+
+context: |
+  A new personal workspace with bare minimum defaults and radical malleability.
+  Users must be able to reshape it while retaining bidirectional connections
+  with other workspaces and external tools or services.
+  Explore APIs, MCP, and ACP as distinct integration surfaces, not interchangeable
+  protocols. Clarify the intended ACP protocol before choosing an adapter.
+  No application stack, deployment model, or data model has been selected.
+  Repository setup does not authorize application implementation.
+
+rules:
+  proposal:
+    - Distinguish confirmed user requirements from proposed defaults and open questions.
+  design:
+    - Explain how customization affects published contracts and existing connections.
+    - Address data ownership, permissions, migration, and recovery.
+  specs:
+    - Give observable scenarios for inbound and outbound interactions.
