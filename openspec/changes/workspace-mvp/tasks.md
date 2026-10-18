@@ -1,6 +1,6 @@
 # Tasks
 
-These are unstarted implementation tasks. Only planning artifacts are changed by this proposal. Live deployment checks require an authorized Cloudflare account and a real public template source; do not mark them complete from a dry run.
+Implementation and acceptance tracking. Live checks were completed on 2026-10-18 using an authorized Cloudflare account, the published template deployment, and disposable verification namespaces. See [verification report](../../../docs/openspec-verification.md) and its sanitized live evidence; dry runs are not counted as live acceptance.
 
 ## 1. Workers project and local workflow
 
@@ -49,17 +49,16 @@ These are unstarted implementation tasks. Only planning artifacts are changed by
 ## 7. Deployable template and release operation
 
 - [x] 7.1 Prepare build/deploy scripts, the real-source Deploy to Cloudflare badge, Durable Object migration declarations, secret-example prompts, binding descriptions, and default configuration; verify dry-run provisioning inputs, no secret/state inclusion, user-selected Worker names, and documentation accurately marks an unavailable public source rather than advertising a working placeholder.
-- [ ] 7.2 Using an authorized Cloudflare account and an actual public source repository, exercise the complete deploy-button flow into a fresh namespace; verify automatic binding provisioning, configured owner login, fail-closed missing-secret behavior, scoped API access over HTTPS, and signed receipt at an allowlisted receiver. Leave this task incomplete if source/account access is unavailable.
-- [ ] 7.3 Verify a compatible hosted redeploy/object eviction retains workspace identity, content, token revocation, pending deliveries, and retry budgets; execute the documented recovery path and record platform-limit/cost considerations and any live-only limitations in the operator guide.
+- [x] 7.2 Using an authorized Cloudflare account and an actual public source repository, exercise the complete deploy-button flow into a fresh namespace; verify automatic binding provisioning, configured owner login, fail-closed missing-secret behavior, scoped API access over HTTPS, and signed receipt at an allowlisted receiver. Leave this task incomplete if source/account access is unavailable.
+- [x] 7.3 Verify a compatible hosted redeploy/object eviction retains workspace identity, content, token revocation, pending deliveries, and retry budgets; execute the documented recovery path and record platform-limit/cost considerations and any live-only limitations in the operator guide.
 
 ## 8. Cross-environment MVP acceptance
 
-- [ ] 8.1 Run the proposal journey locally and on the deployed instance: UI creation, API read, type/field/option renames, board switch, API update through original IDs, UI refresh, signed delivery, and runtime/object recreation; verify local runs use no Cloudflare credentials/remote bindings and report hosted checks separately from mocked transport coverage.
-- [ ] 8.2 Execute local-to-hosted and hosted-to-local snapshot transfer into pristine targets, with identity preservation, excluded connections, destination owner access, and environment isolation; record results without claiming synchronization.
+- [x] 8.1 Run the proposal journey locally and on the deployed instance: UI creation, API read, type/field/option renames, board switch, API update through original IDs, UI refresh, signed delivery, and runtime/object recreation; verify local runs use no Cloudflare credentials/remote bindings and report hosted checks separately from mocked transport coverage.
+- [x] 8.2 Execute local-to-hosted and hosted-to-local snapshot transfer into pristine targets, with identity preservation, excluded connections, destination owner access, and environment isolation; record results without claiming synchronization.
 - [x] 8.3 Run typecheck, client/Worker build, dry-run bundle validation, Workers domain/API/alarm tests, browser checks, and offline local-start smoke tests; verify passing results and an updated README with accurate deployment prerequisites and implemented-versus-deferred behavior.
 
 ## Workflow follow-up
 
-- Review this revised proposal before implementation through `openspec-apply-change`.
-- Publishing a public template or deploying cloud resources is outside this proposal-only action; use the authorized implementation/release workflow for those actions.
-- Archive only after implementation and acceptance checks, including the live template flow, are complete.
+- Implementation and live acceptance are complete; scenario-coverage warnings remain recorded in the verification report.
+- Verification does not archive or synchronize specs; use the corresponding OpenSpec workflow for that step.

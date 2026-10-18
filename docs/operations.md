@@ -94,7 +94,19 @@ fresh state directory. Preserve original state until the replacement is verified
 
 ## Acceptance evidence
 
-See [verification record](verification.md). A clean build/dry run tests packaging,
-not Cloudflare account provisioning. Live deploy-button, hosted redeploy/eviction,
-and local↔hosted transfer tasks must remain open until exercised on an authorized
-account with a public template source.
+See [verification record](verification.md) and the
+[final OpenSpec verification](openspec-verification.md). Live deployment,
+redeploy/eviction, operator checkpoint recovery, signed public receipt and
+local↔hosted transfer were exercised on an authorized account with public source.
+The report records how the original template deployment was established and
+which edge cases still lack direct coverage. A clean build/dry run by itself
+tests packaging and does not establish hosted acceptance.
+
+The checkpoint test used a disposable namespace and an authenticated operator
+harness: record `getCurrentBookmark()`, acknowledge a later mutation, schedule
+`onNextSessionRestoreBookmark(bookmark)`, then abort the object session so the next
+session restores it. The original record was recovered exactly. This procedure
+requires operator-controlled maintenance code; the shipped app has no public
+bookmark, eviction, or database-recovery endpoint. The harness and disposable
+namespace were removed after testing. For ordinary local recovery or transfer,
+use the application snapshot path above.

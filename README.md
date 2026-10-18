@@ -35,8 +35,9 @@ A Cloudflare account is required only for hosted deployment.
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https%3A%2F%2Fgithub.com%2Fdasarpemrograman%2Fmalleable-workspace)
 
-The button uses this public repository. The live account provisioning flow has
-not yet been verified; see [verification status](docs/verification.md).
+The button uses this public repository. Hosted deployment and live acceptance
+results are recorded in [verification status](docs/verification.md), including
+remaining coverage warnings.
 
 The [Deploy to Cloudflare flow](https://developers.cloudflare.com/workers/platform/deploy-buttons/)
 clones the public source and provisions the declared binding. Supply a unique
@@ -99,8 +100,9 @@ MCP/ACP adapter, executable extensions, multi-user collaboration, or automatic
 local/cloud synchronization is included.
 
 The implementation follows [OpenSpec workspace-mvp](openspec/changes/workspace-mvp/proposal.md).
-Live Cloudflare acceptance remains separately tracked in its task list; local
-runtime tests and a bundle dry run do not substitute for a deployed test.
+Local and live Cloudflare acceptance results are recorded in
+[the verification report](docs/openspec-verification.md); local runtime tests
+and a bundle dry run do not substitute for a deployed test.
 
 Run `npm run openspec:init` to install or refresh all 12 official OpenSpec
 workflows for Codex: propose, explore, new, continue, apply, update, ff, sync,

@@ -40,14 +40,16 @@ application semantics; they are not evidence of a real hosted deployment.
 Webhook network requests are intercepted by the runtime test transport; real
 public delivery is not claimed from mocked receipt verification.
 
-## Not completed: live account-dependent acceptance
+## Hosted acceptance completed
 
-`wrangler whoami` reports no authenticated Cloudflare account. On 2026-10-18 the
+Cloudflare access was initially unavailable. On 2026-10-18 the
 owner approved public publication and created the public
 [source repository](https://github.com/dasarpemrograman/malleable-workspace)
 after repository creation through the integration was denied. The source and Git
 history are published there, and the README deployment button targets that source.
-The button's live Cloudflare provisioning flow remains unverified.
+Cloudflare deployment history now confirms a `dash_template` deployment with the
+expected bindings; the detailed report distinguishes that evidence from direct
+interaction with the original dashboard flow.
 
 On 2026-10-18 the owner supplied the deployed origin
 https://male2.alfikrona.workers.dev/. Read-only HTTPS checks confirmed the root
@@ -57,18 +59,32 @@ unknown API route all reject unauthenticated requests with JSON (401) and
 `Cache-Control: no-store`. The protected-route checks also establish that a
 configured Worker/Durable Object responds; they do not establish successful
 owner login, content operations, guided provisioning, webhook delivery, or
-recovery. No deployed credentials were supplied or tested.
+recovery.
 
-These checks remain open in OpenSpec:
+The owner subsequently supplied the deployed key through an ignored local file.
+Authenticated HTTPS checks passed: login (200); Secure, HttpOnly,
+SameSite=Strict cookie; session, capabilities, schema, items, and connections
+reads (200 with no-store); unknown API route (404 JSON); logout (200); and a
+protected read after logout (401). Workspace content and schema were not changed.
+The key and cookies are excluded from the verification output and Git.
 
-- 7.2: real deploy-button provisioning and receipt at an authorized public receiver.
-- 7.3: real hosted redeploy/eviction and hosted checkpoint recovery.
-- 8.1: hosted half of the full UI/API/customization/webhook journey.
-- 8.2: actual local-to-hosted and hosted-to-local transfer (the same code path has
-  passed simulated cross-origin/runtime transfer checks).
+Cloudflare OAuth was subsequently completed through the waiting Wrangler callback
+listener. `wrangler whoami` now confirms authentication. Read-only Cloudflare
+deployment/version queries for `male2` succeed: deployment history includes
+`dash_template`, and the deployed version declares ASSETS, OWNER_KEY as a secret,
+WEBHOOK_ALLOWED_HOSTS, and the WORKSPACE Durable Object binding.
 
-An authorized Cloudflare account is still required to finish those checks.
-No cloud resources have been deployed from this environment.
+The remaining acceptance checks were then executed using an isolated test app
+and public receiver. Fresh provisioning, missing-secret lockout, scoped API and
+revocation, live schema renames, signed receipt, pending delivery across redeploy,
+explicit object eviction, hosted SQLite checkpoint recovery, hosted browser
+interaction, and exact snapshot transfers in both directions passed. All 32
+OpenSpec tasks are now checked. Both temporary Workers and their Durable Object
+namespaces were deleted; the `male2` application was not redeployed or modified.
+
+See the [final verification report](openspec-verification.md) and
+[sanitized live evidence](verification/hosted-2026-10-18.json). Four coverage
+warnings remain; passing acceptance does not establish every edge scenario.
 
 ## Practical boundaries
 
@@ -77,4 +93,5 @@ Restoration is restricted to pristine targets and does not restore credentials.
 Alarms can redeliver or leave receipt unknown within the three-slot budget; verify
 and deduplicate at receivers. Event/delivery history currently grows without
 compaction. Local receiver hostname/DNS trust differs from hosted public egress.
-The deploy-button link is available; live provisioning remains an open check.
+The deploy-button link and hosted template deployment are available. The report
+records the original dashboard-observation and managed-browser proxy limitations.

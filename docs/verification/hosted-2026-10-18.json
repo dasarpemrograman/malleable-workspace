@@ -1,0 +1,134 @@
+{
+  "date": "2026-10-18",
+  "implementationCommit": "ae761159cee8d7a069d111c2055c5027201721d8",
+  "productionOrigin": "https://male2.alfikrona.workers.dev",
+  "productionModified": false,
+  "templateDeploymentEvidence": {
+    "source": "dash_template",
+    "bindings": [
+      "ASSETS",
+      "OWNER_KEY (secret_text)",
+      "WEBHOOK_ALLOWED_HOSTS",
+      "WORKSPACE (durable_object_namespace)"
+    ]
+  },
+  "liveChecks": [
+    {
+      "check": "Fresh hosted deployment fails closed without owner secret",
+      "passed": true
+    },
+    {
+      "check": "Declared binding provisioned and hosted owner login works",
+      "passed": true
+    },
+    {
+      "check": "Local-to-hosted pristine restore preserves exact snapshot including IDs, archived values and board",
+      "passed": true
+    },
+    {
+      "check": "Restore excludes local token and subscriptions; destination owner remains usable",
+      "passed": true
+    },
+    {
+      "check": "Hosted token scopes, owner-route exclusion, cross-origin rejection and immediate revocation",
+      "passed": true
+    },
+    {
+      "check": "Original resource IDs survive hosted type/field/option renames; discovery revision and stale-write conflict",
+      "passed": true
+    },
+    {
+      "check": "Real public HTTPS receiver verifies exact event bytes and HMAC",
+      "passed": true,
+      "receipts": 4
+    },
+    {
+      "check": "Unreachable receiver outcome visible without blocking accepted edit",
+      "passed": true,
+      "attempts": 1
+    },
+    {
+      "check": "Compatible hosted redeploy preserves identity, content, revoked token and durable delivery attempt budget",
+      "passed": true
+    },
+    {
+      "check": "Durable webhook delivery resumes after hosted redeploy",
+      "passed": true,
+      "attempts": 2,
+      "totalAttempts": 2
+    },
+    {
+      "check": "Hosted export excludes credentials, connections and delivery history",
+      "passed": true
+    },
+    {
+      "check": "Hosted SQLite PITR checkpoint recovery restores exact acknowledged pre-mutation record",
+      "passed": true
+    },
+    {
+      "check": "Explicit hosted object eviction retains content and token revocation",
+      "passed": true
+    },
+    {
+      "check": "Production entry point restored after isolated operator recovery harness",
+      "passed": true
+    },
+    {
+      "check": "Hosted UI-created item also reaches real receiver with valid HMAC",
+      "passed": true,
+      "receipts": 16
+    },
+    {
+      "check": "Final hosted snapshot captured after complete UI and API journey",
+      "passed": true
+    },
+    {
+      "check": "Hosted-to-local pristine restore reproduces exact final snapshot and excludes credentials/subscriptions",
+      "passed": true
+    }
+  ],
+  "hostedBrowserChecks": [
+    {
+      "check": "Hosted browser login and saved board/grouping survive reload",
+      "passed": true
+    },
+    {
+      "check": "Hosted keyboard-only item creation is readable through scoped API",
+      "passed": true
+    },
+    {
+      "check": "Hosted UI-created item retains references after API type/field/option renames",
+      "passed": true
+    },
+    {
+      "check": "Hosted board move updates normal API field and external API changes refresh UI",
+      "passed": true
+    },
+    {
+      "check": "Hosted connection instructions use the real HTTPS origin and desktop Axe checks pass",
+      "passed": true
+    },
+    {
+      "check": "Hosted 360-pixel layout and workspace Axe checks pass",
+      "passed": true
+    }
+  ],
+  "cleanup": [
+    {
+      "worker": "mw-verify-6266adb7",
+      "workerDeleted": true,
+      "namespaceDeletedByClassMigration": true
+    },
+    {
+      "worker": "mw-receiver-6266adb7",
+      "workerDeleted": true,
+      "namespaceDeletedByClassMigration": true
+    }
+  ],
+  "testLimitations": [
+    "Chromium UI checks bypassed certificate errors for the managed execution proxy; curl-based API/webhook checks used ordinary certificate verification.",
+    "PITR and explicit eviction used an authenticated temporary operator harness on the disposable namespace; production code has no recovery/debug endpoints.",
+    "Initial 503 immediately after secret deployment cleared after version propagation; initial browser selector and proxy trust failures were harness issues corrected before successful runs.",
+    "Original template deployment is evidenced by male2 platform deployment history; the verification agent did not repeat the dashboard button interaction."
+  ]
+}
