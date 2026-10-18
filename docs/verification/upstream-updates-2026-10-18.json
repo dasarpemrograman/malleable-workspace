@@ -1,7 +1,7 @@
 {
   "change": "upstream-deployment-updates",
   "recordedOn": "2026-10-18",
-  "status": "real-bootstrap-pr-validated-hosted-acceptance-blocked",
+  "status": "hosted-acceptance-passed-actions-pr-setting-and-cleanup-pending",
   "node": "24.19.0",
   "checks": {
     "typecheck": "passed",
@@ -17,7 +17,7 @@
     "strictOpenSpecValidation": "passed",
     "documentedLocalBootstrap": "passed-names-and-original-branch-preserved",
     "actionCommitPins": "all-four-resolved-through-github-api",
-    "publicationAndEnrollment": "real-github-bootstrap-and-dedup-passed-provider-enrollment-fixtures-only",
+    "publicationAndEnrollment": "real-bootstrap-pr-live-enrollment-builds-and-retention-passed",
     "canonicalActionsNoOp": {
       "status": "passed",
       "run": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39095087544",
@@ -25,6 +25,13 @@
       "preparation": "current",
       "candidateValidation": "skipped-no-candidate",
       "publication": "skipped-no-candidate"
+    },
+    "githubCandidateValidation": {
+      "status": "passed",
+      "run": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39101234346",
+      "testsPassed": 23,
+      "browserJourneysPassed": 1,
+      "publisher": "branch-pushed-pr-creation-policy-blocked"
     }
   },
   "templateProvenance": {
@@ -35,16 +42,15 @@
     "workerDeployed": false
   },
   "liveAcceptance": {
-    "status": "bootstrap-pr-passed-hosted-journey-not-executed",
+    "status": "hosted-update-retention-failure-and-compatible-recovery-passed",
     "repository": "dasarpemrograman/mw-updates-acceptance-20261018",
     "observedVisibility": "public",
     "independentRootCommit": "e741d86ed2cf99553dbca3d597441bb210e8df16",
     "baseline": "0ecb5950e9349de6d6e6714ddacca1e193b4eb5b",
     "upstreamTarget": "2cf80b244e22d29b7d34e9dde2cc8741b8597e94",
-    "candidateCommit": "10d07519f08ca7b2b90905943fa35cc52aaba7fa",
+    "candidateCommit": "3359a5fa0ca44550f4d84d6f13d907dbbb8e92ed",
     "pullRequest": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/pull/1",
-    "pullRequestState": "draft-unmerged",
-    "defaultBranchUnchanged": true,
+    "pullRequestState": "merged-by-explicit-test-owner-promotion",
     "publicationDeduplication": "same-pr-returned-without-rewrite",
     "candidateValidation": {
       "dependencyInstall": "passed",
@@ -55,23 +61,47 @@
       "normalGitHubPrChecks": "not-run"
     },
     "instanceNamesPreserved": true,
-    "wranglerAuthentication": "login-required-authorization-window-expired",
-    "hostedEnrollment": null,
-    "workersBuild": null,
-    "activeVersion": null,
+    "wranglerAuthentication": "oauth-login-succeeded",
+    "hostedEnrollment": {
+      "workerName": "mw-updates-acceptance-20261018",
+      "binding": "WORKSPACE",
+      "class": "Workspace",
+      "namespaceId": "9a8d0d59579f43659ff88543f91172e1",
+      "objectName": "primary"
+    },
+    "workersBuild": {
+      "id": "72faeccd-5a18-40cf-888e-6b70d0120266",
+      "sourceCommit": "91c6f424d44cc05c1a6dd8c4a74eab573f1abec9",
+      "status": "success"
+    },
+    "activeVersion": "fa650cd7-aef6-4713-bffc-20db816ff4dd",
     "incompleteTasks": [
-      "4.1",
-      "4.2"
-    ]
+      "4.3"
+    ],
+    "initialPreparedCandidateCommit": "10d07519f08ca7b2b90905943fa35cc52aaba7fa",
+    "bootstrapLeftDefaultBranchUnchanged": true,
+    "defaultBranchPromotedExplicitly": true,
+    "latestObservedVersion": "788a9a32-72c3-4bd8-a6bd-33a2f3e93487",
+    "additionalEvidence": "upstream-updates-hosted-2026-10-18.json"
   },
   "cleanup": {
-    "newExternalResources": [],
+    "newExternalResources": [
+      "Worker mw-updates-acceptance-20261018",
+      "namespace 9a8d0d59579f43659ff88543f91172e1",
+      "Worker mw-updates-receiver-20261018",
+      "namespace 89eddd3d0baf4e7a9520fe9cf352a1ae"
+    ],
     "disposableLocalBootstrapFixtureRemoved": true,
     "retainedForPendingAcceptance": [
       "dasarpemrograman/mw-updates-acceptance-20261018",
       "draft PR #1"
     ],
-    "workersCreatedDuringContinuation": []
+    "workersCreatedDuringContinuation": [
+      "mw-updates-acceptance-20261018",
+      "mw-updates-receiver-20261018"
+    ],
+    "status": "pending-final-publication-check"
   },
-  "productionModified": false
+  "productionModified": false,
+  "productionDefinition": "pre-existing non-disposable deployments, including male2"
 }

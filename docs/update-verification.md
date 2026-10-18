@@ -1,121 +1,135 @@
-# Upstream update implementation verification
+# Upstream update verification
 
-Recorded 2026-10-18 for `upstream-deployment-updates`. Implementation and local
-checks passed. **The real downstream PR → merge → Cloudflare Workers Builds
-journey has not passed acceptance.** Do not archive this change as fully verified.
-See the [machine-readable record](verification/upstream-updates-2026-10-18.json)
-and [operator guide](updates.md).
+Recorded 2026-10-18 for `upstream-deployment-updates`. The real bootstrap PR,
+merge-to-Workers-Builds deployment, retention, failed-build and compatible recovery
+checks passed on disposable resources. Full GitHub candidate validation also
+passed; its PR publication is awaiting the repository's Actions PR setting.
+Resource cleanup is pending. Do not archive until the remaining work is resolved.
 
-## Executed checks
+Evidence: [local and bootstrap record](verification/upstream-updates-2026-10-18.json)
+and [hosted acceptance record](verification/upstream-updates-hosted-2026-10-18.json).
+See the [update guide](updates.md) for operator commands and recovery limits.
 
-- `npm run typecheck`: passed on Node 24.19.0.
-- `npm test`: 23 tests passed, including the existing app runtime/contracts and
-  11 new import/publication/deployment tests. Build and Worker bundle passed.
-- `CHROMIUM_PATH=/usr/bin/chromium npm run test:browser`: one complete local
-  owner journey passed at desktop and narrow widths, including accessibility.
-- `npm run deploy -- --dry-run`: guarded initial-deployment path passed type,
-  build, bundle and all then-current 22 tests, followed by the generated temporary
-  config's real Wrangler dry run. No upload occurred. Later additions to the
-  publication tests passed in the final 23-test run.
-- `openspec validate upstream-deployment-updates --strict --json`: passed.
-- Documented CLI bootstrap against a fresh independent local template import:
-  passed, using full baseline `99de1fe087e99592a0c7a587997b12f0871b3da3`.
-  Its package/Worker names and original branch remained unchanged. Only the
-  temporary candidate received upstream metadata. Temporary fixture removed.
-- Read-only preparation against the existing public `male2` repository found
-  its unique baseline `0ecb5950e9349de6d6e6714ddacca1e193b4eb5b` and prepared a
-  local candidate targeting planning commit `99de1fe...`; this was a bootstrap
-  provenance check, not a live acceptance deployment or a test of all subsequently
-  uncommitted updater code. No remote branch or Worker was modified.
-- All four pinned first-party Action commits resolved through the GitHub API.
-  YAML tests checked manual-only triggering, job credentials, trusted publication
-  checkout, immutable preparer artifact IDs and actual validation-result wiring.
-  Automated candidate validation/publication jobs remain static/fixture coverage. A real
-  [canonical self-update run](https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39095087544)
-  passed at `62783476ea18cc43531ca106d6fbc641130a1365`: trusted preparation
-  reported current, and candidate validation/publication were skipped. No PR or
-  deployment occurred. GitHub initially rejected `runner.temp` in job-level env;
-  moving that configuration into the runner step corrected its expression context.
-  A regression assertion and the four publication/workflow tests passed afterward,
-  along with type checking.
+## Local and GitHub checks
 
-The Git fixtures cover unrelated template histories and forks, automatic and
-explicit baseline selection, ambiguity, dirty trees, binary content, executable
-modes, renames/deletes, customization retention/conflicts, unavailable/replaced
-history and migration removal. Publication fixtures cover denied PR creation,
-retry, draft failures, deduplication, owner-edited update branches, stale bases,
-source-ref movement and tampered summaries. They use local bare Git repositories
-and a fake GitHub API; none of those PR URLs identify a real PR.
+- Node 24.19.0: type checking passed; all 23 runtime/contract/operator tests passed.
+- The complete browser journey passed at desktop and narrow widths, including
+  accessibility, for the renamed bootstrap candidate.
+- The guarded initial-deployment dry run passed without upload.
+- Strict OpenSpec validation passed.
+- Git fixtures covered unrelated template histories, forks, baseline ambiguity,
+  dirty trees, conflicts, binary content, modes, renames/deletes, missing history,
+  migration guards, PR retries/deduplication, owner-edited branches, source-ref
+  movement, stale bases and artifact-summary tampering.
+- All four pinned Action commits resolved. The real
+  [canonical no-op run](https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39095087544)
+  passed without creating a candidate or deploying.
 
-Deployment fixtures verify destination/CI override/branch/routing checks,
-append-only migrations, missing provider inspection, namespace mismatch, missing
-OWNER_KEY, variable drift and preservation of a non-empty provider allowlist.
-They inspect the generated configuration: `vars` is absent and `keep_vars` is
-true. Failing checks leave the upload callback uncalled. No enrolled production
-upload or real provider-setting retention was tested during this change.
+Two platform integration issues were found and corrected: `runner.temp` must be
+resolved inside a runner step rather than job-level environment settings, and
+ID-based artifact downloads require `merge-multiple: true` to place the bundle
+and summary in their expected input directories. The latter fix is commit
+`12ea0e70b60cb8aee3ca5ebcd571eaa4b404870c`, with a regression assertion in the
+workflow test. The trusted preparer's immutable artifact ID remains required.
 
-Managed-environment commands used writable temporary Wrangler config/log paths
-for local tests. The first browser attempt failed because the default Wrangler
-registry path was not writable; the isolated rerun passed. Git subprocess tests
-required the environment's network-enabled execution permission, including for
-local Git operations. These are execution-environment constraints.
+The first full downstream workflow
+[39100974859](https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39100974859)
+exposed the artifact layout issue. The corrected
+[39101234346](https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39101234346)
+passed preparation and its separate unprivileged candidate-validation job. That
+job ran dependency installation, type/build/runtime checks and the browser
+journey without production application or Cloudflare credentials. Publication
+pushed its branch, then reported `github_access` instead of claiming a PR had
+been created. Enabling GitHub Actions PR creation is the remaining configuration
+step for that run; the earlier local authenticated publication path passed.
 
-## Real disposable repository bootstrap
+## Independent template bootstrap and promotion
 
-After the user created the test repository, it became accessible. It was empty
-and reported public visibility. GitHub denied the integration's attempt to set
-it private (`403 Resource not accessible by integration`), so only already-public
-source and non-secret test metadata were published.
+The user-created repository was empty and reported public visibility. GitHub
+rejected the integration's attempt to make it private. Only previously public
+source and non-secret enrollment metadata were published there.
 
-The test repository now contains a root commit with **no parents**,
-`e741d86ed2cf99553dbca3d597441bb210e8df16`, imported from upstream
-`0ecb5950e9349de6d6e6714ddacca1e193b4eb5b`. Only the package and Worker names
-were changed to `mw-updates-acceptance-20261018`. This establishes the unrelated
-history that the real bootstrap path must support.
+The independent root commit `e741d86ed2cf99553dbca3d597441bb210e8df16` has no
+parents and was imported from upstream
+`0ecb5950e9349de6d6e6714ddacca1e193b4eb5b`. Only package/Worker names were
+normalized to `mw-updates-acceptance-20261018`. Bootstrap prepared upstream target
+`2cf80b244e22d29b7d34e9dde2cc8741b8597e94` as candidate
+`10d07519f08ca7b2b90905943fa35cc52aaba7fa`; all candidate checks passed in a
+separate local process without production credential environment variables.
 
-The documented CLI fetched the downstream and prepared target
-`2cf80b244e22d29b7d34e9dde2cc8741b8597e94`, producing candidate
-`10d07519f08ca7b2b90905943fa35cc52aaba7fa`. In a separate validation process
-with production credential environment variables removed and empty GitHub
-configuration, `npm ci`, type checking, all 23 tests, local setup and the full
-browser journey passed. The instance names remained intact. Local credentials
-and persistence were ignored by Git and were not published.
+The real [PR #1](https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/pull/1)
+was created with the publication CLI. Repeating publication returned the same PR
+without rewriting it. It remained draft/unmerged until the baseline Worker and
+its real namespace were enrolled in commit
+`3359a5fa0ca44550f4d84d6f13d907dbbb8e92ed`. After baseline data was seeded and
+the owner connected Workers Builds, explicit test-owner promotion created merge
+commit `91c6f424d44cc05c1a6dd8c4a74eab573f1abec9`. GitHub records PR #1 as merged.
+There was no automatic merge policy or production application updater endpoint.
 
-The trusted publication CLI created the real
-[bootstrap PR #1](https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/pull/1).
-Repeating publication returned that same PR with `reused: true`, without
-rewriting the branch. Its body records the exact local checks and pending hosted
-work. The PR is **draft and unmerged**; the downstream `main` remains the original
-root commit. Normal GitHub PR checks have not run; local validation is not
-represented as GitHub CI. OpenSpec task **2.4 is complete**.
+## Real Workers Builds
 
-`gh pr edit` hit a GitHub Projects-classic GraphQL deprecation error. Updating the
-body through the REST API with a JSON input file succeeded. This does not affect
-the updater's successful branch/PR creation or duplicate detection.
+Initial provisioning used Wrangler CLI solely to establish the old baseline.
+Every upgrade, failure and recovery below was triggered through the connected
+repository's production branch. No CLI deployment substituted for those builds.
+The owner confirmed Node 24, `npm ci`, `npm run deploy`, production branch `main`
+and disabled non-production deployments. Workers Builds API access requires a
+Workers CI permission unavailable through this Wrangler OAuth login; successful
+GitHub check runs and the Workers API supplied independent build/version evidence.
 
-## Remaining hosted acceptance blockers
+| Operation | Downstream source commit | Workers Builds reference | Active version |
+| --- | --- | --- | --- |
+| Bootstrap promotion | `91c6f424d44cc05c1a6dd8c4a74eab573f1abec9` | `72faeccd-5a18-40cf-888e-6b70d0120266` — success | `fa650cd7-aef6-4713-bffc-20db816ff4dd` |
+| Compatible UI change | `cfdf53e74eb33a40bd96480f13b1be3966247fb8` | `78a668b2-3f2b-4002-9968-9a8df8a8a38b` — success | `eaf2bcc7-2d47-4432-bbcd-aca0a365e8d9` |
+| Intentional compile failure | `0b3d0703df09587a03469e939aeb7d87fa100c74` | `7a9a3b72-c6fb-493b-aafb-7c8fbca1f755` — failure | `eaf2bcc7-2d47-4432-bbcd-aca0a365e8d9` unchanged |
+| Compatible recovery | `cac2b00c6802b0d42e0885d8c48f2afc38749c03` | `7baa98ad-f449-449d-8323-6c1ee29b0d0f` — success | `3b00cd5d-e6e0-47a0-b58a-ecc0662a2763` |
+| Trusted workflow maintenance | `a11a3f5c4eaab63f4e76b1dd1e2be6a944518171` | `0999ef0f-d72b-478a-bd07-ab735618d2ca` — success | `788a9a32-72c3-4bd8-a6bd-33a2f3e93487` |
 
-The earlier attempt to create this repository was denied by the integration;
-the user's creation resolved that blocker. GitHub access is now sufficient for
-the tested bootstrap branch and PR operations. Repository Actions settings could
-not be read with this integration, so their administrative configuration is not
-claimed as verified.
+All serving versions used the same test origin, Worker tag
+`3ebf322e60f94b2c9d04364ec3ede5d8`, binding `WORKSPACE`, class `Workspace`,
+namespace `9a8d0d59579f43659ff88543f91172e1` and literal `primary` route.
+Package and Worker names were preserved. The non-empty provider receiver
+allowlist survived the repository's empty default, and the existing OWNER_KEY
+remained usable. No secret values were committed or included in public evidence.
 
-Wrangler's authentication check requires login. A fresh login was started, but
-its authorization-code window expired before completion. No Cloudflare Worker,
-namespace or Workers Builds connection was created, and no hosted enrollment
-has been committed. The draft PR explicitly requires enrollment before promotion.
+## Retention and recovery
 
-OpenSpec tasks **4.1 and 4.2 remain unchecked**. Completing them requires
-Cloudflare authentication, an isolated test Worker/namespace, and the test
-repository's Workers Builds Git connection. Establish the baseline deployment
-and data first, add the real destination enrollment to the candidate, then
-review/promote the test PR deliberately. Record the build's source commit and
-active Worker version/namespace, and verify owner/data/archive/token/delivery
-retention plus failed-build and compatible rollback/recovery paths.
+The baseline contained all four field kinds, zero/false values, an option,
+archived fields/items, a saved board, active and revoked tokens, and a signed
+receiver subscription. After each successful deployment, the expected failed
+build, and compatible recovery, the exported snapshot matched exactly, with
+SHA-256 `55e834a326f473d8715bd0c4ab82012d3ca9e7972bbee7a17db21a2215875d34`.
+Workspace/schema/item IDs, values and archives were retained; the original owner
+key worked, the active token remained usable and the revoked token returned 401.
 
-The disposable repository and draft PR are deliberately retained for those
-remaining tests. Remove only their test resources after acceptance completes.
-No PR was merged, no existing branch was reset, and no Worker was deployed or
-deleted during this continuation. `male2` remains outside the acceptance target.
-Earlier MVP hosted evidence does not replace the outstanding update tests.
+A real HTTPS receiver returned 503 to establish pending delivery
+`b7535619-c8a6-4319-85fc-56957520bb0c`. The subscription was paused during the
+build so the existing retry budget would not expire while deployment ran. After
+upgrade, the same pending delivery retained its attempt count. Re-enabling the
+subscription resumed it successfully on attempt two. Both receipts carried the
+same event ID and verified HMAC signatures over the exact bytes and timestamp.
+This proves retained/resumed pending work; it does not claim uninterrupted
+receiver availability during the build.
+
+A deliberately invalid TypeScript file produced local diagnostic TS2322. Its
+corresponding Workers Build failed while the previously serving version and UI
+remained unchanged. Recovery reverted that file and the successful UI title
+change, preserving upstream tracking, deployment enrollment, migration history
+and the deployment guard. Workers Builds restored the original title, and the
+snapshot still matched. No database migration or database rewind was attempted;
+this is compatible code rollback evidence, separate from earlier MVP PITR tests.
+
+## Remaining configuration and cleanup
+
+GitHub Actions PR creation must be enabled before retrying the corrected run's
+publication job. The candidate has already passed validation and its branch is
+present; retrying must reuse that branch without force-pushing or merging it.
+
+The disposable application Worker/namespace, receiver Worker/namespace and test
+repository remain for the final publication check and cleanup. Their deletion
+will be recorded explicitly. Earlier checks used temporary writable Wrangler
+config/log paths; an initial local browser attempt failed on the read-only default
+registry path, then passed with an isolated temporary config directory.
+
+`male2` and other existing deployments were not modified. The earlier read-only
+`male2` provenance check and previous MVP acceptance do not replace this change's
+new downstream-to-Workers-Builds evidence.

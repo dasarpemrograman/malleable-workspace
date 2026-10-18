@@ -1,0 +1,388 @@
+{
+  "recordedOn": "2026-10-18",
+  "status": "hosted-acceptance-passed-publication-permission-and-cleanup-pending",
+  "repository": "dasarpemrograman/mw-updates-acceptance-20261018",
+  "checks": {
+    "initial": {
+      "repository": "dasarpemrograman/mw-updates-acceptance-20261018",
+      "baseline": "0ecb5950e9349de6d6e6714ddacca1e193b4eb5b",
+      "initialCommit": "e741d86ed2cf99553dbca3d597441bb210e8df16",
+      "workerName": "mw-updates-acceptance-20261018",
+      "independentHistory": true
+    },
+    "baseline-deployment": {
+      "accountId": "8ef921fb790b1fa782115ae16958f643",
+      "workerName": "mw-updates-acceptance-20261018",
+      "scriptTag": "3ebf322e60f94b2c9d04364ec3ede5d8",
+      "initialCommit": "e741d86ed2cf99553dbca3d597441bb210e8df16",
+      "baseline": "0ecb5950e9349de6d6e6714ddacca1e193b4eb5b",
+      "initialProvisioning": "wrangler-cli-only-not-upgrade-acceptance"
+    },
+    "enrollment-check": {
+      "version": 1,
+      "accountId": "8ef921fb790b1fa782115ae16958f643",
+      "workerName": "mw-updates-acceptance-20261018",
+      "namespaceId": "9a8d0d59579f43659ff88543f91172e1",
+      "bindingName": "WORKSPACE",
+      "className": "Workspace",
+      "objectName": "primary",
+      "productionBranch": "main",
+      "migrations": [
+        {
+          "tag": "v1",
+          "new_sqlite_classes": [
+            "Workspace"
+          ]
+        }
+      ],
+      "candidateCommit": "3359a5fa0ca44550f4d84d6f13d907dbbb8e92ed",
+      "liveReadOnlyPreflight": "passed",
+      "varsOmitted": true,
+      "keepVars": true,
+      "deployed": false
+    },
+    "baseline-checks": {
+      "baselineOwnerAccess": true,
+      "workspaceId": "fad1110a-e931-4437-87c7-756283736e59",
+      "customTypeId": "47517c9c-a127-4912-bf9b-06cdb3925e66",
+      "itemId": "2ad2b02e-4ec2-4409-b174-9ee4b04c2c2c",
+      "archivedItemId": "8536622e-3717-4f5f-a886-80872ac3d693",
+      "snapshotSha256": "55e834a326f473d8715bd0c4ab82012d3ca9e7972bbee7a17db21a2215875d34",
+      "fieldKinds": [
+        "text",
+        "number",
+        "checkbox",
+        "select"
+      ],
+      "revokedTokenRejected": true,
+      "activeTokenUsable": true,
+      "nonEmptyProviderAllowlist": true,
+      "signedReceiptsVerified": 1,
+      "pendingDeliveryId": "b7535619-c8a6-4319-85fc-56957520bb0c",
+      "pendingSubscriptionPausedDuringBuild": true
+    },
+    "first-upgrade-build": {
+      "sourceCommit": "91c6f424d44cc05c1a6dd8c4a74eab573f1abec9",
+      "checks": [
+        {
+          "id": 117595837190,
+          "name": "Workers Builds: mw-updates-acceptance-20261018",
+          "status": "completed",
+          "conclusion": "success",
+          "detailsUrl": "https://dash.cloudflare.com/8ef921fb790b1fa782115ae16958f643/workers/services/view/mw-updates-acceptance-20261018/production/builds/72faeccd-5a18-40cf-888e-6b70d0120266"
+        }
+      ],
+      "statuses": [],
+      "activeDeployment": {
+        "id": "12a4847d-d590-4eb4-9fcc-f502e6f1cd22",
+        "source": "wrangler",
+        "createdOn": "2026-10-18T05:26:52.698187Z",
+        "versions": [
+          {
+            "version_id": "fa650cd7-aef6-4713-bffc-20db816ff4dd",
+            "percentage": 100
+          }
+        ],
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        }
+      },
+      "versionAnnotations": {
+        "workers/triggered_by": "version_upload"
+      },
+      "versionSource": "wrangler"
+    },
+    "first-upgrade-retention": {
+      "stage": "first-upgrade",
+      "ownerAccess": true,
+      "workspaceAndSnapshotEqual": true,
+      "allResourceIdsValuesAndArchivesRetained": true,
+      "revokedTokenRejected": true,
+      "activeTokenUsable": true,
+      "providerAllowlistRetained": true,
+      "deliveryId": "b7535619-c8a6-4319-85fc-56957520bb0c",
+      "deliveryState": "pending",
+      "deliveryAttempts": 1,
+      "snapshotSha256": "55e834a326f473d8715bd0c4ab82012d3ca9e7972bbee7a17db21a2215875d34",
+      "pendingDeliveryRetainedThenResumed": true,
+      "signedReceiptsVerified": 2,
+      "finalDeliveryState": "succeeded",
+      "finalDeliveryAttempts": 2
+    },
+    "first-upgrade-identity": {
+      "namespaceId": "9a8d0d59579f43659ff88543f91172e1",
+      "className": "Workspace",
+      "workerName": "mw-updates-acceptance-20261018",
+      "accountId": "8ef921fb790b1fa782115ae16958f643",
+      "providerAllowlistRetained": true,
+      "ownerSecretRetained": true,
+      "instanceNamesRetained": true
+    },
+    "ui-update-promotion": {
+      "sourceCommit": "cfdf53e74eb33a40bd96480f13b1be3966247fb8",
+      "change": "HTML document title only",
+      "expectedTitle": "Malleable \u2014 update acceptance",
+      "deploymentStatus": "pending-workers-build"
+    },
+    "ui-update-build-observation": {
+      "pageTitle": "Malleable \u2014 update acceptance",
+      "sourceCommit": "cfdf53e74eb33a40bd96480f13b1be3966247fb8",
+      "checks": [
+        {
+          "id": 117596507216,
+          "name": "Workers Builds: mw-updates-acceptance-20261018",
+          "status": "completed",
+          "conclusion": "success",
+          "detailsUrl": "https://dash.cloudflare.com/8ef921fb790b1fa782115ae16958f643/workers/services/view/mw-updates-acceptance-20261018/production/builds/78a668b2-3f2b-4002-9968-9a8df8a8a38b"
+        }
+      ],
+      "statuses": [],
+      "activeDeployment": {
+        "id": "9f2cf26f-b3fd-4b38-a501-4e99451cd31a",
+        "source": "wrangler",
+        "createdOn": "2026-10-18T05:30:47.037985Z",
+        "versions": [
+          {
+            "version_id": "eaf2bcc7-2d47-4432-bbcd-aca0a365e8d9",
+            "percentage": 100
+          }
+        ],
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        }
+      },
+      "versionAnnotations": {
+        "workers/triggered_by": "version_upload"
+      },
+      "versionSource": "wrangler"
+    },
+    "ui-update-retention": {
+      "stage": "ui-update",
+      "ownerAccess": true,
+      "workspaceAndSnapshotEqual": true,
+      "allResourceIdsValuesAndArchivesRetained": true,
+      "revokedTokenRejected": true,
+      "activeTokenUsable": true,
+      "providerAllowlistRetained": true,
+      "deliveryId": "b7535619-c8a6-4319-85fc-56957520bb0c",
+      "deliveryState": "succeeded",
+      "deliveryAttempts": 2,
+      "snapshotSha256": "55e834a326f473d8715bd0c4ab82012d3ca9e7972bbee7a17db21a2215875d34"
+    },
+    "failing-build-promotion": {
+      "sourceCommit": "0b3d0703df09587a03469e939aeb7d87fa100c74",
+      "expectedResult": "typecheck-fails-before-upload",
+      "localDiagnostic": "TS2322",
+      "activeVersionBeforeFailure": "eaf2bcc7-2d47-4432-bbcd-aca0a365e8d9",
+      "expectedTitle": "Malleable \u2014 update acceptance"
+    },
+    "failing-build-build-observation": {
+      "pageTitle": "Malleable \u2014 update acceptance",
+      "sourceCommit": "0b3d0703df09587a03469e939aeb7d87fa100c74",
+      "checks": [
+        {
+          "id": 117596853836,
+          "name": "Workers Builds: mw-updates-acceptance-20261018",
+          "status": "completed",
+          "conclusion": "failure",
+          "detailsUrl": "https://dash.cloudflare.com/8ef921fb790b1fa782115ae16958f643/workers/services/view/mw-updates-acceptance-20261018/production/builds/7a9a3b72-c6fb-493b-aafb-7c8fbca1f755"
+        }
+      ],
+      "statuses": [],
+      "activeDeployment": {
+        "id": "9f2cf26f-b3fd-4b38-a501-4e99451cd31a",
+        "source": "wrangler",
+        "createdOn": "2026-10-18T05:30:47.037985Z",
+        "versions": [
+          {
+            "version_id": "eaf2bcc7-2d47-4432-bbcd-aca0a365e8d9",
+            "percentage": 100
+          }
+        ],
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        }
+      },
+      "versionAnnotations": {
+        "workers/triggered_by": "version_upload"
+      },
+      "versionSource": "wrangler"
+    },
+    "failed-build-retention": {
+      "stage": "failed-build",
+      "ownerAccess": true,
+      "workspaceAndSnapshotEqual": true,
+      "allResourceIdsValuesAndArchivesRetained": true,
+      "revokedTokenRejected": true,
+      "activeTokenUsable": true,
+      "providerAllowlistRetained": true,
+      "deliveryId": "b7535619-c8a6-4319-85fc-56957520bb0c",
+      "deliveryState": "succeeded",
+      "deliveryAttempts": 2,
+      "snapshotSha256": "55e834a326f473d8715bd0c4ab82012d3ca9e7972bbee7a17db21a2215875d34"
+    },
+    "recovery-promotion": {
+      "sourceCommit": "cac2b00c6802b0d42e0885d8c48f2afc38749c03",
+      "revertedCommits": [
+        "0b3d0703df09587a03469e939aeb7d87fa100c74",
+        "cfdf53e74eb33a40bd96480f13b1be3966247fb8"
+      ],
+      "identityAndProvenancePreserved": true,
+      "deploymentGuardPreserved": true,
+      "databaseRewindAttempted": false,
+      "expectedTitle": "Malleable \u2014 a space of your own"
+    },
+    "recovery-build-observation": {
+      "pageTitle": "Malleable \u2014 a space of your own",
+      "sourceCommit": "cac2b00c6802b0d42e0885d8c48f2afc38749c03",
+      "checks": [
+        {
+          "id": 117597109242,
+          "name": "Workers Builds: mw-updates-acceptance-20261018",
+          "status": "completed",
+          "conclusion": "success",
+          "detailsUrl": "https://dash.cloudflare.com/8ef921fb790b1fa782115ae16958f643/workers/services/view/mw-updates-acceptance-20261018/production/builds/7baa98ad-f449-449d-8323-6c1ee29b0d0f"
+        },
+        {
+          "id": 117597087561,
+          "name": "publish",
+          "status": "completed",
+          "conclusion": "failure",
+          "detailsUrl": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39100974859/job/117597087561"
+        },
+        {
+          "id": 117597064492,
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "failure",
+          "detailsUrl": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39100974859/job/117597064492"
+        },
+        {
+          "id": 117597011130,
+          "name": "prepare",
+          "status": "completed",
+          "conclusion": "success",
+          "detailsUrl": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39100974859/job/117597011130"
+        }
+      ],
+      "statuses": [],
+      "activeDeployment": {
+        "id": "71126336-ad06-4ca2-b8f3-279052be5d5d",
+        "source": "wrangler",
+        "createdOn": "2026-10-18T05:34:20.569388Z",
+        "versions": [
+          {
+            "version_id": "3b00cd5d-e6e0-47a0-b58a-ecc0662a2763",
+            "percentage": 100
+          }
+        ],
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        }
+      },
+      "versionAnnotations": {
+        "workers/triggered_by": "version_upload"
+      },
+      "versionSource": "wrangler"
+    },
+    "recovery-retention": {
+      "stage": "recovery",
+      "ownerAccess": true,
+      "workspaceAndSnapshotEqual": true,
+      "allResourceIdsValuesAndArchivesRetained": true,
+      "revokedTokenRejected": true,
+      "activeTokenUsable": true,
+      "providerAllowlistRetained": true,
+      "deliveryId": "b7535619-c8a6-4319-85fc-56957520bb0c",
+      "deliveryState": "succeeded",
+      "deliveryAttempts": 2,
+      "snapshotSha256": "55e834a326f473d8715bd0c4ab82012d3ca9e7972bbee7a17db21a2215875d34"
+    },
+    "workflow-repair-promotion": {
+      "sourceCommit": "a11a3f5c4eaab63f4e76b1dd1e2be6a944518171",
+      "sourceFix": "12ea0e70b60cb8aee3ca5ebcd571eaa4b404870c",
+      "scope": [
+        ".github/workflows/upstream-update.yml",
+        "tests/update-publication.test.ts"
+      ],
+      "importedBaselineRetained": "2cf80b244e22d29b7d34e9dde2cc8741b8597e94",
+      "ownerMaintenance": true
+    },
+    "workflow-repair-build-observation": {
+      "pageTitle": "Malleable \u2014 a space of your own",
+      "sourceCommit": "a11a3f5c4eaab63f4e76b1dd1e2be6a944518171",
+      "checks": [
+        {
+          "id": 117598021946,
+          "name": "publish",
+          "status": "completed",
+          "conclusion": "failure",
+          "detailsUrl": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39101234346/job/117598021946"
+        },
+        {
+          "id": 117597858589,
+          "name": "Workers Builds: mw-updates-acceptance-20261018",
+          "status": "completed",
+          "conclusion": "success",
+          "detailsUrl": "https://dash.cloudflare.com/8ef921fb790b1fa782115ae16958f643/workers/services/view/mw-updates-acceptance-20261018/production/builds/0999ef0f-d72b-478a-bd07-ab735618d2ca"
+        },
+        {
+          "id": 117597810004,
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "success",
+          "detailsUrl": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39101234346/job/117597810004"
+        },
+        {
+          "id": 117597759439,
+          "name": "prepare",
+          "status": "completed",
+          "conclusion": "success",
+          "detailsUrl": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39101234346/job/117597759439"
+        }
+      ],
+      "statuses": [],
+      "activeDeployment": {
+        "id": "12c7c1d6-f8b3-4cc2-8391-eae9fafb55d0",
+        "source": "wrangler",
+        "createdOn": "2026-10-18T05:38:54.702468Z",
+        "versions": [
+          {
+            "version_id": "788a9a32-72c3-4bd8-a6bd-33a2f3e93487",
+            "percentage": 100
+          }
+        ],
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        }
+      },
+      "versionAnnotations": {
+        "workers/triggered_by": "version_upload"
+      },
+      "versionSource": "wrangler"
+    },
+    "workflow-repair-retention": {
+      "stage": "workflow-repair",
+      "ownerAccess": true,
+      "workspaceAndSnapshotEqual": true,
+      "allResourceIdsValuesAndArchivesRetained": true,
+      "revokedTokenRejected": true,
+      "activeTokenUsable": true,
+      "providerAllowlistRetained": true,
+      "deliveryId": "b7535619-c8a6-4319-85fc-56957520bb0c",
+      "deliveryState": "succeeded",
+      "deliveryAttempts": 2,
+      "snapshotSha256": "55e834a326f473d8715bd0c4ab82012d3ca9e7972bbee7a17db21a2215875d34"
+    }
+  },
+  "updaterWorkflow": {
+    "initialArtifactLayoutFailure": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39100974859",
+    "fixedArtifactLayoutRun": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39101234346",
+    "prepare": "passed",
+    "validate": "passed",
+    "publish": "blocked-pr-creation-policy",
+    "branchPushed": true,
+    "fixCommit": "12ea0e70b60cb8aee3ca5ebcd571eaa4b404870c"
+  },
+  "productionModified": false
+}
