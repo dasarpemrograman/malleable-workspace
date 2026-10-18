@@ -206,7 +206,8 @@ test("manual workflow isolates candidate execution from write credentials and pu
   assert.equal(workflow.concurrency["cancel-in-progress"], false);
   const { prepare, validate, publish } = workflow.jobs;
   assert.deepEqual(validate.permissions, {});
-  for (const job of [prepare, validate, publish])
+  for (const job of [prepare, validate, publish]) {
+    assert.doesNotMatch(JSON.stringify(job.env ?? {}), /runner\./);
     for (const step of job.steps) {
       if (step.uses) assert.match(step.uses, /^actions\/[a-z-]+@[a-f0-9]{40}$/);
       if (step.uses?.startsWith("actions/checkout")) {
@@ -214,6 +215,7 @@ test("manual workflow isolates candidate execution from write credentials and pu
         assert.equal(step.with.ref, "${{ github.workflow_sha }}");
       }
     }
+  }
   assert.equal(prepare.permissions.contents, "read");
   assert.equal(publish.permissions.contents, "write");
   const candidate = JSON.stringify(validate);
