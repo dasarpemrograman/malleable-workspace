@@ -1,0 +1,35 @@
+{
+  "change": "upstream-deployment-updates",
+  "recordedOn": "2026-10-18",
+  "status": "implemented-local-checks-passed-live-acceptance-blocked",
+  "node": "24.19.0",
+  "checks": {
+    "typecheck": "passed",
+    "runtimeAndOperatorTests": { "passed": 23, "failed": 0 },
+    "browserJourney": { "passed": 1, "failed": 0 },
+    "guardedInitialDeploymentDryRun": "passed-no-upload",
+    "strictOpenSpecValidation": "passed",
+    "documentedLocalBootstrap": "passed-names-and-original-branch-preserved",
+    "actionCommitPins": "all-four-resolved-through-github-api",
+    "publicationAndEnrollment": "local-git-and-provider-api-fixtures-only"
+  },
+  "templateProvenance": {
+    "observedRepository": "dasarpemrograman/male2",
+    "matchedBaseline": "0ecb5950e9349de6d6e6714ddacca1e193b4eb5b",
+    "readOnlyPreparationTarget": "99de1fe087e99592a0c7a587997b12f0871b3da3",
+    "remoteWritten": false,
+    "workerDeployed": false
+  },
+  "liveAcceptance": {
+    "status": "blocked-not-executed",
+    "repository": "dasarpemrograman/mw-updates-acceptance-20261018",
+    "githubError": "Resource not accessible by integration (createRepository)",
+    "wranglerAuthentication": "check-did-not-succeed",
+    "pullRequest": null,
+    "workersBuild": null,
+    "activeVersion": null,
+    "incompleteTasks": ["2.4", "4.1", "4.2"]
+  },
+  "cleanup": { "newExternalResources": [], "disposableLocalBootstrapFixtureRemoved": true },
+  "productionModified": false
+}

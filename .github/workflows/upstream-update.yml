@@ -1,0 +1,131 @@
+name: Prepare upstream update
+
+on:
+  workflow_dispatch:
+    inputs:
+      upstream_ref:
+        description: Optional upstream branch or tag; otherwise use enrolled ref
+        type: string
+      baseline:
+        description: Full reviewed upstream SHA for first enrollment or rebaseline
+        type: string
+      account_id:
+        description: Existing Cloudflare account ID for first hosted enrollment
+        type: string
+      namespace_id:
+        description: Existing WORKSPACE namespace ID for first hosted enrollment
+        type: string
+
+permissions: {}
+concurrency:
+  group: upstream-update-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      prepared: ${{ steps.candidate.outputs.prepared }}
+      branch: ${{ steps.candidate.outputs.branch }}
+      artifact: ${{ steps.artifact.outputs.artifact-id }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          ref: ${{ github.workflow_sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+      - run: npm ci --ignore-scripts
+      - id: candidate
+        run: node scripts/prepare-update-action.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPDATE_REF: ${{ inputs.upstream_ref }}
+          UPDATE_BASELINE: ${{ inputs.baseline }}
+          UPDATE_ACCOUNT: ${{ inputs.account_id }}
+          UPDATE_NAMESPACE: ${{ inputs.namespace_id }}
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        id: artifact
+        if: steps.candidate.outputs.prepared == 'true'
+        with:
+          name: upstream-candidate
+          path: |
+            ${{ runner.temp }}/upstream-candidate/summary.json
+            ${{ runner.temp }}/upstream-candidate/candidate.bundle
+          if-no-files-found: error
+          retention-days: 7
+
+  validate:
+    needs: prepare
+    if: needs.prepare.outputs.prepared == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions: {}
+    env:
+      CI: true
+      WRANGLER_SEND_METRICS: false
+      XDG_CONFIG_HOME: ${{ runner.temp }}/validation-config
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          artifact-ids: ${{ needs.prepare.outputs.artifact }}
+          path: ${{ runner.temp }}/candidate-input
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+      - name: Check out Git objects without repository credentials
+        env:
+          UPDATE_BRANCH: ${{ needs.prepare.outputs.branch }}
+        run: |
+          [[ "$UPDATE_BRANCH" =~ ^upstream-update/[0-9a-f]{40}$ ]]
+          git init "$RUNNER_TEMP/candidate"
+          git -C "$RUNNER_TEMP/candidate" -c core.hooksPath=/dev/null -c credential.helper= fetch "$RUNNER_TEMP/candidate-input/candidate.bundle" "$UPDATE_BRANCH:refs/heads/candidate"
+          git -C "$RUNNER_TEMP/candidate" -c core.hooksPath=/dev/null checkout --detach candidate
+      - name: Validate candidate without production or repository credentials
+        working-directory: ${{ runner.temp }}/candidate
+        run: |
+          node -e 'for(const k of ["GH_TOKEN","GITHUB_TOKEN","CLOUDFLARE_API_TOKEN","CLOUDFLARE_API_KEY","OWNER_KEY"])if(process.env[k])throw Error("Unexpected candidate credential: "+k)'
+          npm ci
+          npm run typecheck
+          npm test
+          npm run setup:local
+          npx playwright install --with-deps chromium
+          CHROMIUM_PATH="$(node -e "console.log(require('@playwright/test').chromium.executablePath())")" npm run test:browser
+
+  publish:
+    needs: [prepare, validate]
+    if: always() && needs.prepare.result == 'success' && needs.prepare.outputs.prepared == 'true' && needs.validate.result != 'cancelled'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          ref: ${{ github.workflow_sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+      - run: npm ci --ignore-scripts
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          artifact-ids: ${{ needs.prepare.outputs.artifact }}
+          path: ${{ runner.temp }}/publication-input
+      - name: Publish objects as an update PR; never run candidate code
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPDATE_REPOSITORY: ${{ github.repository }}
+          UPDATE_BASE: ${{ github.event.repository.default_branch }}
+          UPDATE_VALIDATION: ${{ needs.validate.result == 'success' && 'passed' || 'failed' }}
+          UPDATE_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          node scripts/publish-update.mjs --directory "$RUNNER_TEMP/publication-input" --repo "$UPDATE_REPOSITORY" --base "$UPDATE_BASE" --validation "$UPDATE_VALIDATION" --run-url "$UPDATE_RUN_URL"

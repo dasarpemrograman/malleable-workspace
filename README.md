@@ -56,6 +56,13 @@ Use the deployed HTTPS URL and the supplied owner key. See [deployment and recov
 for secret rotation, migration, retry, isolation, and rollback details. Account
 limits and charges apply; this is not a promise of unlimited free operation.
 
+## Update an existing deployment
+
+Use the [reviewed upstream update workflow](docs/updates.md) to prepare a PR in
+your copy, then merge it to your connected Cloudflare Workers Builds production
+branch. Enrollment protects the existing Worker and namespace and preserves
+provider settings. Copies do not automatically receive upstream commits.
+
 ## Connect a tool
 
 In **Connections**, issue a token with only the scopes the tool needs:
@@ -73,7 +80,8 @@ and the v1 API remain stable. See [API documentation](docs/api.md) and the
 
 Outbound receivers are disabled until the operator configures an exact-host
 allowlist. Set `WEBHOOK_ALLOWED_HOSTS` to a JSON array of trusted public DNS
-hostnames in Wrangler vars or `.dev.vars`, then restart/redeploy. Only HTTPS on
+hostnames in `.dev.vars` locally or Worker settings for an enrolled hosted copy.
+Restart locally; hosted upgrades preserve provider settings. Only HTTPS on
 port 443 is accepted. Local DNS is trusted; this is not an arbitrary-URL proxy.
 Receivers get content snapshots. Read [webhook verification](docs/webhooks.md)
 before configuring a destination.
