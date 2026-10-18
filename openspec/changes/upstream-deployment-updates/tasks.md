@@ -28,7 +28,7 @@ repository and Worker are not used as deployment acceptance targets.
 
 - [x] 4.1 On an authorized disposable downstream repository and Worker, bootstrap and prepare a PR, perform explicit test-owner promotion, and verify Workers Builds deploys that source commit to the same origin/namespace after required checks; record build/Worker-version references and distinguish template history from the newly executed update flow.
 - [x] 4.2 Before/after that live update, verify package/Worker names, owner access, instance variables, workspace/item/schema IDs, values, archived data, token revocation and pending signed deliveries are retained; exercise a failing pre-upload build plus the documented compatible rollback/recovery procedure without using `male2` as an unreviewed test target.
-- [ ] 4.3 Run strict OpenSpec validation, appropriate Git/workflow/deployment tests and the existing app checks; publish sanitized acceptance evidence, delete only disposable repositories/Workers/namespaces, and leave live tasks incomplete when required external access or evidence is unavailable.
+- [x] 4.3 Run strict OpenSpec validation, appropriate Git/workflow/deployment tests and the existing app checks; publish sanitized acceptance evidence, delete only disposable repositories/Workers/namespaces, and leave live tasks incomplete when required external access or evidence is unavailable.
 
 ## Workflow follow-up
 

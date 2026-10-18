@@ -3,9 +3,10 @@
 Recorded 2026-10-18 for `upstream-deployment-updates`. The real bootstrap PR,
 merge-to-Workers-Builds deployment, retention, failed-build and compatible recovery
 checks passed on disposable resources. The full GitHub updater passed all three
-jobs and created PR #2 without merging it. Both Workers and their namespaces
-have been deleted and verified absent. Only test-repository cleanup remains;
-GitHub denied the integration permission to delete it.
+jobs and created PR #2 without merging it. Both Workers, their namespaces and
+the disposable repository have been deleted and verified absent. All 15
+implementation tasks are complete. The evidence below preserves historical
+references; links into the deleted test repository may no longer resolve.
 
 Evidence: [local and bootstrap record](verification/upstream-updates-2026-10-18.json)
 and [hosted acceptance record](verification/upstream-updates-hosted-2026-10-18.json).
@@ -131,11 +132,11 @@ were cleanup operations after acceptance, separate from the tested upgrade
 path. Worker service lookups returned 404; a complete paginated namespace list
 confirmed both test namespaces were absent. No existing deployment was deleted.
 
-GitHub denied test-repository deletion with HTTP 403. The owner has been asked
-to delete only `dasarpemrograman/mw-updates-acceptance-20261018`, or explicitly
-retain it as an acceptance artifact. Task 4.3 remains incomplete until that last
-cleanup decision is resolved. Build/PR/version references are preserved in the
-sanitized evidence even if the disposable repository is subsequently deleted.
+GitHub denied integration-driven repository deletion with HTTP 403. The owner
+then deleted only `dasarpemrograman/mw-updates-acceptance-20261018`; a subsequent
+API lookup returned 404. Temporary acceptance credentials, local persistence and
+checkouts were removed after preserving sanitized build/PR/version references.
+No test resources remain. Task 4.3 is complete.
 
 Earlier local checks used temporary writable Wrangler config/log paths; an
 initial browser attempt failed on the read-only default registry path, then

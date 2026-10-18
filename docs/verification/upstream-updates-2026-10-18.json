@@ -1,7 +1,7 @@
 {
   "change": "upstream-deployment-updates",
   "recordedOn": "2026-10-18",
-  "status": "all-acceptance-checks-passed-repository-cleanup-pending",
+  "status": "passed",
   "node": "24.19.0",
   "checks": {
     "typecheck": "passed",
@@ -76,37 +76,38 @@
       "status": "success"
     },
     "activeVersion": "fa650cd7-aef6-4713-bffc-20db816ff4dd",
-    "incompleteTasks": [
-      "4.3"
-    ],
+    "incompleteTasks": [],
     "initialPreparedCandidateCommit": "10d07519f08ca7b2b90905943fa35cc52aaba7fa",
     "bootstrapLeftDefaultBranchUnchanged": true,
     "defaultBranchPromotedExplicitly": true,
     "latestObservedVersion": "788a9a32-72c3-4bd8-a6bd-33a2f3e93487",
-    "additionalEvidence": "upstream-updates-hosted-2026-10-18.json"
+    "additionalEvidence": "upstream-updates-hosted-2026-10-18.json",
+    "repositoryDeletedAfterAcceptance": true
   },
   "cleanup": {
-    "newExternalResources": [
+    "disposableLocalBootstrapFixtureRemoved": true,
+    "retainedForPendingAcceptance": [],
+    "workersCreatedDuringContinuation": [
+      "mw-updates-acceptance-20261018",
+      "mw-updates-receiver-20261018"
+    ],
+    "status": "complete",
+    "workersDeletionVerified": true,
+    "namespacesDeletionVerified": true,
+    "repositoryDeletion": {
+      "repository": "dasarpemrograman/mw-updates-acceptance-20261018",
+      "ownerConfirmedDeletion": true,
+      "apiHttpStatus": 404,
+      "status": "verified-deleted"
+    },
+    "createdExternalResources": [
       "Worker mw-updates-acceptance-20261018",
       "namespace 9a8d0d59579f43659ff88543f91172e1",
       "Worker mw-updates-receiver-20261018",
       "namespace 89eddd3d0baf4e7a9520fe9cf352a1ae"
     ],
-    "disposableLocalBootstrapFixtureRemoved": true,
-    "retainedForPendingAcceptance": [
-      "dasarpemrograman/mw-updates-acceptance-20261018"
-    ],
-    "workersCreatedDuringContinuation": [
-      "mw-updates-acceptance-20261018",
-      "mw-updates-receiver-20261018"
-    ],
-    "status": "workers-and-namespaces-deleted-repository-cleanup-pending",
-    "workersDeletionVerified": true,
-    "namespacesDeletionVerified": true,
-    "repositoryDeletion": {
-      "status": "awaiting-user-deletion-or-explicit-retention",
-      "integrationHttpStatus": 403
-    }
+    "remainingExternalResources": [],
+    "temporaryAcceptanceFilesRemoved": true
   },
   "productionModified": false,
   "productionDefinition": "pre-existing non-disposable deployments, including male2"

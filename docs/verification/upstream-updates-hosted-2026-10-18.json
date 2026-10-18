@@ -1,6 +1,6 @@
 {
   "recordedOn": "2026-10-18",
-  "status": "all-acceptance-checks-passed-repository-cleanup-pending",
+  "status": "passed",
   "repository": "dasarpemrograman/mw-updates-acceptance-20261018",
   "checks": {
     "initial": {
@@ -444,9 +444,13 @@
     ],
     "productionTouched": false,
     "repository": {
-      "name": "dasarpemrograman/mw-updates-acceptance-20261018",
-      "status": "awaiting-user-deletion-or-explicit-retention",
-      "integrationDeleteHttpStatus": 403
-    }
-  }
+      "repository": "dasarpemrograman/mw-updates-acceptance-20261018",
+      "ownerConfirmedDeletion": true,
+      "apiHttpStatus": 404,
+      "status": "verified-deleted"
+    },
+    "remainingExternalResources": [],
+    "temporaryAcceptanceFilesRemoved": true
+  },
+  "githubReferencesAreHistoricalAfterRepositoryDeletion": true
 }
