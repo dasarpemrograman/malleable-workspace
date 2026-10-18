@@ -23,7 +23,7 @@
 - [x] 4.1 Extract client transport/types, reusable controls, feature editors/connections/recovery and the application shell from the mount entry point; update the architecture map and verify typecheck plus the full browser journey, including conflict drafts, pagination, desktop/narrow layouts and accessibility.
 - [x] 4.2 Extract backend store/initialization and request/authentication helpers while retaining the existing Durable Object export, lifecycle and central authorization gate; document capability ownership and verify missing-key/origin/scopes/revocation, persisted-state and newer-schema refusal runtime scenarios.
 - [x] 4.3 Extract grouped API/owner handlers while preserving transaction bodies, validation and error mapping; update the API/schema change map and verify stable-ID mutations, false/zero values, revision conflicts, snapshots, bounded pagination and existing OpenAPI/contract checks.
-- [ ] 4.4 Extract event/delivery/alarm behavior with typed storage capabilities and preserved reservation/completion transactions; document the outbound-change boundary and verify exact signing bytes, pending-work persistence, duplicate alarms, retry budgets, subscription disable and stale completion handling using existing regressions plus only missing boundary cases.
+- [x] 4.4 Extract event/delivery/alarm behavior with typed storage capabilities and preserved reservation/completion transactions; document the outbound-change boundary and verify exact signing bytes, pending-work persistence, duplicate alarms, retry budgets, subscription disable and stale completion handling using existing regressions plus only missing boundary cases.
 
 ## 5. Contribution CI and review feedback
 

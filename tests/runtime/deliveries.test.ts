@@ -163,18 +163,17 @@ test(
       );
       release();
       await alarm;
-      // A background alarm may have reserved the job before the explicit fixture call.
-      for (let i = 0; i < 20; i++) {
-        const deliveries = (await req("/owner/deliveries")).data;
-        assert.equal(deliveries[0].cycle, 2);
-        assert.equal(deliveries[0].state, "pending");
-        assert.equal(deliveries[0].attempts, 0);
-        assert.equal(deliveries[0].totalAttempts, 1);
-        const attempts = await st.testSQL(
-          "SELECT data FROM records WHERE kind='attempt'",
-        );
-        assert.equal(attempts.length, 0);
-      }
+      const delivery = (await req("/owner/deliveries")).data[0];
+      assert.equal(delivery.cycle, 2);
+      assert.equal(delivery.state, "pending");
+      assert.equal(delivery.attempts, 0);
+      assert.equal(delivery.totalAttempts, 1);
+      const attempts = await st.testSQL(
+        "SELECT data FROM records WHERE kind='attempt'",
+      );
+      assert.equal(attempts.length, 1);
+      // Reservation is retained for audit; the stale receipt cannot mark it successful.
+      assert.equal(JSON.parse(attempts[0].data as string).outcome, "inflight");
       await st.testClearAlarm();
     } finally {
       release();
