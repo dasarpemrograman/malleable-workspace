@@ -11,7 +11,8 @@ import {
   rmSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
+import { symlinkSync } from "node:fs";
 import { parse } from "yaml";
 // @ts-expect-error Native JavaScript contributor tooling.
 import * as development from "../scripts/dev.mjs";
@@ -181,3 +182,83 @@ test("ordinary CI uses immutable Actions and read-only checks with a trusted exp
   );
   assert.equal(artifact.with.path, "test-results/**/*.png");
 });
+
+test(
+  "the real Vite/Wrangler supervisor releases its port on Ctrl-C",
+  { timeout: 30000 },
+  async () => {
+    const root = mkdtempSync(join(tmpdir(), "supervisor-integration-"));
+    const selected = await port();
+    symlinkSync(resolve("node_modules"), join(root, "node_modules"), "dir");
+    writeFileSync(join(root, ".dev.vars"), "TEST_ONLY=local\n", {
+      mode: 0o600,
+    });
+    writeFileSync(
+      join(root, "index.html"),
+      '<script type="module" src="/client.js"></script>',
+    );
+    writeFileSync(join(root, "client.js"), 'console.log("fixture");');
+    writeFileSync(
+      join(root, "worker.js"),
+      'export default {fetch(){return new Response("supervised");}};',
+    );
+    writeFileSync(
+      join(root, "wrangler.jsonc"),
+      JSON.stringify({
+        name: "supervisor-fixture",
+        main: "worker.js",
+        compatibility_date: "2026-10-17",
+      }),
+    );
+    const child = spawn(process.execPath, [resolve("scripts/dev.mjs")], {
+      cwd: root,
+      env: {
+        ...process.env,
+        MW_DEV_PORT: String(selected),
+        XDG_CONFIG_HOME: join(root, "config"),
+        WRANGLER_LOG_PATH: join(root, "wrangler.log"),
+        WRANGLER_SEND_METRICS: "false",
+      },
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    let output = "";
+    child.stdout.on("data", (data) => {
+      output = (output + data).slice(-4000);
+    });
+    child.stderr.on("data", (data) => {
+      output = (output + data).slice(-4000);
+    });
+    const exited = new Promise<number | null>((resolve) =>
+      child.once("exit", resolve),
+    );
+    try {
+      let ready = false;
+      for (let attempt = 0; attempt < 100; attempt++) {
+        if (child.exitCode !== null) throw Error(output);
+        try {
+          ready =
+            (await (await fetch(`http://127.0.0.1:${selected}`)).text()) ===
+            "supervised";
+        } catch {
+          /* wait for startup */
+        }
+        if (ready) break;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      assert.ok(ready, output);
+      child.kill("SIGINT");
+      assert.equal(await exited, 0, output);
+      await development.availablePort(selected);
+      assert.equal(
+        readFileSync(join(root, ".dev.vars"), "utf8"),
+        "TEST_ONLY=local\n",
+      );
+    } finally {
+      if (child.exitCode === null && child.signalCode === null) {
+        child.kill("SIGINT");
+        await exited;
+      }
+      rmSync(root, { recursive: true, force: true });
+    }
+  },
+);

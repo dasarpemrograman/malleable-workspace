@@ -40,24 +40,27 @@ export async function startDev({
   const close = (code = 0) =>
     (shutdown ??= (async () => {
       stopping = true;
-      await watcher?.close();
-      if (child?.pid && child.exitCode === null && child.signalCode === null) {
-        const exited = new Promise((resolve) => child.once("exit", resolve));
+      // Kill the owned process group before awaiting watcher shutdown. A wrapper
+      // may already have exited while its Wrangler/workerd descendants still run.
+      let exited = Promise.resolve();
+      let timer;
+      if (child?.pid) {
+        if (child.exitCode === null && child.signalCode === null)
+          exited = new Promise((resolve) => child.once("exit", resolve));
         const kill = (signal) => {
           try {
-            if (process.platform !== "win32" && child.pid)
-              process.kill(-child.pid, signal);
+            if (process.platform !== "win32") process.kill(-child.pid, signal);
             else child.kill(signal);
           } catch (error) {
             if (error.code !== "ESRCH") throw error;
           }
         };
         kill("SIGTERM");
-        const timer = setTimeout(() => kill("SIGKILL"), 5000);
+        timer = setTimeout(() => kill("SIGKILL"), 5000);
         timer.unref();
-        await exited;
-        clearTimeout(timer);
       }
+      await Promise.all([watcher?.close(), exited]);
+      clearTimeout(timer);
       finish(code);
     })());
   const start = () => {
@@ -134,12 +137,11 @@ if (
     if (!existsSync(".dev.vars"))
       throw new Error("Run npm run setup:local before development.");
     const abort = new AbortController();
-    for (const signal of ["SIGINT", "SIGTERM"])
-      process.once(signal, () => {
-        abort.abort();
-      });
+    const stop = () => abort.abort();
+    for (const signal of ["SIGINT", "SIGTERM"]) process.on(signal, stop);
     const controller = await startDev({ signal: abort.signal });
     process.exitCode = await controller.finished;
+    for (const signal of ["SIGINT", "SIGTERM"]) process.off(signal, stop);
   } catch (error) {
     console.error(error.message);
     process.exitCode = 1;
