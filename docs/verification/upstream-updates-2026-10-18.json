@@ -1,7 +1,7 @@
 {
   "change": "upstream-deployment-updates",
   "recordedOn": "2026-10-18",
-  "status": "hosted-acceptance-passed-actions-pr-setting-and-cleanup-pending",
+  "status": "all-acceptance-checks-passed-repository-cleanup-pending",
   "node": "24.19.0",
   "checks": {
     "typecheck": "passed",
@@ -31,7 +31,8 @@
       "run": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39101234346",
       "testsPassed": 23,
       "browserJourneysPassed": 1,
-      "publisher": "branch-pushed-pr-creation-policy-blocked"
+      "publisher": "passed-pr-2-created-without-merge",
+      "pullRequest": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/pull/2"
     }
   },
   "templateProvenance": {
@@ -93,14 +94,19 @@
     ],
     "disposableLocalBootstrapFixtureRemoved": true,
     "retainedForPendingAcceptance": [
-      "dasarpemrograman/mw-updates-acceptance-20261018",
-      "draft PR #1"
+      "dasarpemrograman/mw-updates-acceptance-20261018"
     ],
     "workersCreatedDuringContinuation": [
       "mw-updates-acceptance-20261018",
       "mw-updates-receiver-20261018"
     ],
-    "status": "pending-final-publication-check"
+    "status": "workers-and-namespaces-deleted-repository-cleanup-pending",
+    "workersDeletionVerified": true,
+    "namespacesDeletionVerified": true,
+    "repositoryDeletion": {
+      "status": "awaiting-user-deletion-or-explicit-retention",
+      "integrationHttpStatus": 403
+    }
   },
   "productionModified": false,
   "productionDefinition": "pre-existing non-disposable deployments, including male2"

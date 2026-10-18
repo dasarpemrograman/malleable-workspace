@@ -2,9 +2,10 @@
 
 Recorded 2026-10-18 for `upstream-deployment-updates`. The real bootstrap PR,
 merge-to-Workers-Builds deployment, retention, failed-build and compatible recovery
-checks passed on disposable resources. Full GitHub candidate validation also
-passed; its PR publication is awaiting the repository's Actions PR setting.
-Resource cleanup is pending. Do not archive until the remaining work is resolved.
+checks passed on disposable resources. The full GitHub updater passed all three
+jobs and created PR #2 without merging it. Both Workers and their namespaces
+have been deleted and verified absent. Only test-repository cleanup remains;
+GitHub denied the integration permission to delete it.
 
 Evidence: [local and bootstrap record](verification/upstream-updates-2026-10-18.json)
 and [hosted acceptance record](verification/upstream-updates-hosted-2026-10-18.json).
@@ -36,12 +37,16 @@ The first full downstream workflow
 [39100974859](https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39100974859)
 exposed the artifact layout issue. The corrected
 [39101234346](https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39101234346)
-passed preparation and its separate unprivileged candidate-validation job. That
-job ran dependency installation, type/build/runtime checks and the browser
-journey without production application or Cloudflare credentials. Publication
-pushed its branch, then reported `github_access` instead of claiming a PR had
-been created. Enabling GitHub Actions PR creation is the remaining configuration
-step for that run; the earlier local authenticated publication path passed.
+passed preparation, its separate unprivileged candidate-validation job, and
+trusted publication. Validation ran dependency installation, type/build/runtime
+checks, all 23 tests and the browser journey without production application or
+Cloudflare credentials. Publication initially pushed its branch and reported
+`github_access` when repository policy blocked PR creation. After the owner
+enabled Actions PR creation, retry succeeded and created
+[PR #2](https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/pull/2),
+reusing the existing candidate branch without rewriting it. PR #2 remained
+unmerged and the downstream default branch stayed unchanged. The candidate
+retained pinned target `12ea0e7...` even after upstream evidence commits advanced.
 
 ## Independent template bootstrap and promotion
 
@@ -118,17 +123,23 @@ and the deployment guard. Workers Builds restored the original title, and the
 snapshot still matched. No database migration or database rewind was attempted;
 this is compatible code rollback evidence, separate from earlier MVP PITR tests.
 
-## Remaining configuration and cleanup
+## Cleanup
 
-GitHub Actions PR creation must be enabled before retrying the corrected run's
-publication job. The candidate has already passed validation and its branch is
-present; retrying must reuse that branch without force-pushing or merging it.
+The disposable application and receiver Workers were each torn down with an
+explicit `acceptance-cleanup-v2` class-deletion migration, then deleted. These
+were cleanup operations after acceptance, separate from the tested upgrade
+path. Worker service lookups returned 404; a complete paginated namespace list
+confirmed both test namespaces were absent. No existing deployment was deleted.
 
-The disposable application Worker/namespace, receiver Worker/namespace and test
-repository remain for the final publication check and cleanup. Their deletion
-will be recorded explicitly. Earlier checks used temporary writable Wrangler
-config/log paths; an initial local browser attempt failed on the read-only default
-registry path, then passed with an isolated temporary config directory.
+GitHub denied test-repository deletion with HTTP 403. The owner has been asked
+to delete only `dasarpemrograman/mw-updates-acceptance-20261018`, or explicitly
+retain it as an acceptance artifact. Task 4.3 remains incomplete until that last
+cleanup decision is resolved. Build/PR/version references are preserved in the
+sanitized evidence even if the disposable repository is subsequently deleted.
+
+Earlier local checks used temporary writable Wrangler config/log paths; an
+initial browser attempt failed on the read-only default registry path, then
+passed with an isolated temporary config directory.
 
 `male2` and other existing deployments were not modified. The earlier read-only
 `male2` provenance check and previous MVP acceptance do not replace this change's

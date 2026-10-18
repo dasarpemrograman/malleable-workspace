@@ -1,6 +1,6 @@
 {
   "recordedOn": "2026-10-18",
-  "status": "hosted-acceptance-passed-publication-permission-and-cleanup-pending",
+  "status": "all-acceptance-checks-passed-repository-cleanup-pending",
   "repository": "dasarpemrograman/mw-updates-acceptance-20261018",
   "checks": {
     "initial": {
@@ -380,9 +380,73 @@
     "fixedArtifactLayoutRun": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39101234346",
     "prepare": "passed",
     "validate": "passed",
-    "publish": "blocked-pr-creation-policy",
+    "publish": "passed-after-owner-enabled-actions-pr-creation",
     "branchPushed": true,
-    "fixCommit": "12ea0e70b60cb8aee3ca5ebcd571eaa4b404870c"
+    "fixCommit": "12ea0e70b60cb8aee3ca5ebcd571eaa4b404870c",
+    "finalResult": {
+      "status": "passed",
+      "run": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39101234346",
+      "sourceCommit": "a11a3f5c4eaab63f4e76b1dd1e2be6a944518171",
+      "jobs": [
+        {
+          "name": "publish",
+          "conclusion": "success",
+          "url": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39101234346/job/117599399037"
+        },
+        {
+          "name": "validate",
+          "conclusion": "success",
+          "url": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39101234346/job/117599399643"
+        },
+        {
+          "name": "prepare",
+          "conclusion": "success",
+          "url": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/actions/runs/39101234346/job/117599422484"
+        }
+      ],
+      "candidateValidation": {
+        "testsPassed": 23,
+        "browserJourneysPassed": 1,
+        "productionCredentials": false
+      },
+      "pullRequest": {
+        "url": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/pull/2",
+        "number": 2,
+        "state": "open",
+        "draft": false,
+        "merged": false,
+        "head": "cff740ec759b10e78e58c86613409a01dde9f02d",
+        "base": "a11a3f5c4eaab63f4e76b1dd1e2be6a944518171"
+      },
+      "defaultBranchUnchanged": true,
+      "existingCandidateBranchReused": true,
+      "targetPinnedTo": "12ea0e70b60cb8aee3ca5ebcd571eaa4b404870c"
+    }
   },
-  "productionModified": false
+  "productionModified": false,
+  "cleanup": {
+    "status": "passed",
+    "resources": [
+      {
+        "worker": "mw-updates-acceptance-20261018",
+        "namespaceId": "9a8d0d59579f43659ff88543f91172e1",
+        "classDeletionMigration": "acceptance-cleanup-v2",
+        "workerAbsent": true,
+        "namespaceAbsent": true
+      },
+      {
+        "worker": "mw-updates-receiver-20261018",
+        "namespaceId": "89eddd3d0baf4e7a9520fe9cf352a1ae",
+        "classDeletionMigration": "acceptance-cleanup-v2",
+        "workerAbsent": true,
+        "namespaceAbsent": true
+      }
+    ],
+    "productionTouched": false,
+    "repository": {
+      "name": "dasarpemrograman/mw-updates-acceptance-20261018",
+      "status": "awaiting-user-deletion-or-explicit-retention",
+      "integrationDeleteHttpStatus": 403
+    }
+  }
 }
