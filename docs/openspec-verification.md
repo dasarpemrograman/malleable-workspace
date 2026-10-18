@@ -132,6 +132,16 @@ edge cases above, so this report does not claim every scenario has passed or giv
 an unconditional archive-readiness verdict. Verification is finalized; no archive
 or spec synchronization was performed.
 
+### Subsequent archive
+
+On 2026-10-18 the owner explicitly requested archival and selected spec sync.
+All five main specs were synced, preserving all 38 requirements and 58 scenarios,
+then the change moved to
+[2026-10-18-workspace-mvp](../openspec/changes/archive/2026-10-18-workspace-mvp/).
+All 32 tasks remain complete. The four coverage warnings are retained. The
+documentation suggestion above was addressed by adding implementation-status
+notes to the archived proposal/design; their original decisions were preserved.
+
 ## Requirement implementation mapping
 
 All 38 requirements are ADDED requirements. Evidence below identifies code and

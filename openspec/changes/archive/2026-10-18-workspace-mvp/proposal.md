@@ -1,5 +1,11 @@
 # Proposal
 
+Archived status (2026-10-18): implemented and verified, with all 32 tasks complete
+and five main specs synced. The text below records proposal-time context;
+statements about absent application code or unavailable public source describe
+that earlier stage. See the [verification report](../../../../docs/openspec-verification.md)
+for implemented behavior and remaining coverage warnings.
+
 ## Why
 
 A personal workspace should adapt as its owner's work changes without forcing every connected tool to relearn its structure. This MVP will test that promise with a Cloudflare Workers application that is simple to deploy and also usable locally through the Workers development runtime.

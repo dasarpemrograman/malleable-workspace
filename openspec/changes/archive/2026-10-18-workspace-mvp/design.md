@@ -1,5 +1,10 @@
 # Design
 
+Archived status (2026-10-18): this design was implemented and verified. The
+planning-only statements below describe the original proposal stage, rather than
+the current repository. See the [verification report](../../../../docs/openspec-verification.md)
+for acceptance evidence and remaining coverage warnings.
+
 ## Context
 
 See `proposal.md` for the MVP and `specs/workspace-deployment/spec.md` for the requested deployment behavior. The repository contains OpenSpec tooling and unimplemented planning artifacts only. The previous Fastify/native SQLite design was never built; this revision replaces it before implementation.

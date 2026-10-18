@@ -1,6 +1,6 @@
 # Tasks
 
-Implementation and acceptance tracking. Live checks were completed on 2026-10-18 using an authorized Cloudflare account, the published template deployment, and disposable verification namespaces. See [verification report](../../../docs/openspec-verification.md) and its sanitized live evidence; dry runs are not counted as live acceptance.
+Implementation and acceptance tracking. Live checks were completed on 2026-10-18 using an authorized Cloudflare account, the published template deployment, and disposable verification namespaces. See [verification report](../../../../docs/openspec-verification.md) and its sanitized live evidence; dry runs are not counted as live acceptance. This change was archived with all five main specs synced on 2026-10-18.
 
 ## 1. Workers project and local workflow
 

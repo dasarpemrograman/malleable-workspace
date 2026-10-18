@@ -99,7 +99,8 @@ permanent schema deletion, field-kind conversion, existing item type changes,
 MCP/ACP adapter, executable extensions, multi-user collaboration, or automatic
 local/cloud synchronization is included.
 
-The implementation follows [OpenSpec workspace-mvp](openspec/changes/workspace-mvp/proposal.md).
+The implementation follows [OpenSpec workspace-mvp](openspec/changes/archive/2026-10-18-workspace-mvp/proposal.md),
+archived with its five [main specifications](openspec/specs/) synced.
 Local and live Cloudflare acceptance results are recorded in
 [the verification report](docs/openspec-verification.md); local runtime tests
 and a bundle dry run do not substitute for a deployed test.
