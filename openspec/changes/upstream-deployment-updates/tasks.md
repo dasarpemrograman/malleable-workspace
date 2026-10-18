@@ -15,7 +15,7 @@ repository and Worker are not used as deployment acceptance targets.
 - [x] 2.1 Add the manual Prepare upstream update workflow and CLI PR publication path, serializing checks and reusing an open PR for the same target without force-resetting it; verify duplicate/no-change runs, missing PR permissions, a stale existing PR and source-ref movement using isolated GitHub API fixtures.
 - [x] 2.2 Separate candidate preparation, unprivileged install/type/build/runtime/browser validation and trusted PR publication; pin Actions, remove persisted write credentials from candidate checkouts, and verify no production secrets/deploy tokens/write credentials enter candidate commands or failure logs.
 - [x] 2.3 Include immutable baseline/target, changed files, migration/binding/dependency/workflow changes and exact validation outcomes in the PR/run summary; verify failed candidates remain failed/draft and pending normal PR workflow approvals are never shown as passed.
-- [ ] 2.4 Document GitHub Actions PR settings, local authenticated CLI fallback, workflow-approval behavior and the review/merge steps; verify the instructions against a disposable downstream GitHub repository with an unrelated initial history and record a real update PR without automatically merging it.
+- [x] 2.4 Document GitHub Actions PR settings, local authenticated CLI fallback, workflow-approval behavior and the review/merge steps; verify the instructions against a disposable downstream GitHub repository with an unrelated initial history and record a real update PR without automatically merging it.
 
 ## 3. Guarded deployment to an existing Worker
 

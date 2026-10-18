@@ -1,7 +1,7 @@
 {
   "change": "upstream-deployment-updates",
   "recordedOn": "2026-10-18",
-  "status": "implemented-local-checks-passed-live-acceptance-blocked",
+  "status": "real-bootstrap-pr-validated-hosted-acceptance-blocked",
   "node": "24.19.0",
   "checks": {
     "typecheck": "passed",
@@ -17,7 +17,7 @@
     "strictOpenSpecValidation": "passed",
     "documentedLocalBootstrap": "passed-names-and-original-branch-preserved",
     "actionCommitPins": "all-four-resolved-through-github-api",
-    "publicationAndEnrollment": "local-git-and-provider-api-fixtures-only",
+    "publicationAndEnrollment": "real-github-bootstrap-and-dedup-passed-provider-enrollment-fixtures-only",
     "canonicalActionsNoOp": {
       "status": "passed",
       "run": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39095087544",
@@ -35,22 +35,43 @@
     "workerDeployed": false
   },
   "liveAcceptance": {
-    "status": "blocked-not-executed",
+    "status": "bootstrap-pr-passed-hosted-journey-not-executed",
     "repository": "dasarpemrograman/mw-updates-acceptance-20261018",
-    "githubError": "Resource not accessible by integration (createRepository)",
-    "wranglerAuthentication": "check-did-not-succeed",
-    "pullRequest": null,
+    "observedVisibility": "public",
+    "independentRootCommit": "e741d86ed2cf99553dbca3d597441bb210e8df16",
+    "baseline": "0ecb5950e9349de6d6e6714ddacca1e193b4eb5b",
+    "upstreamTarget": "2cf80b244e22d29b7d34e9dde2cc8741b8597e94",
+    "candidateCommit": "10d07519f08ca7b2b90905943fa35cc52aaba7fa",
+    "pullRequest": "https://github.com/dasarpemrograman/mw-updates-acceptance-20261018/pull/1",
+    "pullRequestState": "draft-unmerged",
+    "defaultBranchUnchanged": true,
+    "publicationDeduplication": "same-pr-returned-without-rewrite",
+    "candidateValidation": {
+      "dependencyInstall": "passed",
+      "typecheck": "passed",
+      "testsPassed": 23,
+      "browserJourneysPassed": 1,
+      "location": "isolated-local-process",
+      "normalGitHubPrChecks": "not-run"
+    },
+    "instanceNamesPreserved": true,
+    "wranglerAuthentication": "login-required-authorization-window-expired",
+    "hostedEnrollment": null,
     "workersBuild": null,
     "activeVersion": null,
     "incompleteTasks": [
-      "2.4",
       "4.1",
       "4.2"
     ]
   },
   "cleanup": {
     "newExternalResources": [],
-    "disposableLocalBootstrapFixtureRemoved": true
+    "disposableLocalBootstrapFixtureRemoved": true,
+    "retainedForPendingAcceptance": [
+      "dasarpemrograman/mw-updates-acceptance-20261018",
+      "draft PR #1"
+    ],
+    "workersCreatedDuringContinuation": []
   },
   "productionModified": false
 }
