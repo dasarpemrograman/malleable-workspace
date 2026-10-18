@@ -46,6 +46,14 @@ public delivery is not claimed from mocked receipt verification.
 identity can authenticate, but the intended repository does not exist and prior
 creation was denied by its integration. No public template URL is available.
 
+On 2026-10-18 the owner explicitly approved public publication of the source,
+documentation, and Git history as `dasarpemrograman/malleable-workspace`.
+Publication was retried through both GitHub CLI/GraphQL and the supported REST
+repository-creation endpoint. Both returned `Resource not accessible by
+integration` (REST HTTP 403). This is a GitHub integration access restriction;
+publication approval is already recorded and does not need to be requested again.
+No repository was created, no remote was configured, and no source was uploaded.
+
 These checks remain open in OpenSpec:
 
 - 7.2: real deploy-button provisioning and receipt at an authorized public receiver.
