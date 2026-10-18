@@ -42,17 +42,12 @@ public delivery is not claimed from mocked receipt verification.
 
 ## Not completed: live account-dependent acceptance
 
-`wrangler whoami` reports no authenticated Cloudflare account. The connected GitHub
-identity can authenticate, but the intended repository does not exist and prior
-creation was denied by its integration. No public template URL is available.
-
-On 2026-10-18 the owner explicitly approved public publication of the source,
-documentation, and Git history as `dasarpemrograman/malleable-workspace`.
-Publication was retried through both GitHub CLI/GraphQL and the supported REST
-repository-creation endpoint. Both returned `Resource not accessible by
-integration` (REST HTTP 403). This is a GitHub integration access restriction;
-publication approval is already recorded and does not need to be requested again.
-No repository was created, no remote was configured, and no source was uploaded.
+`wrangler whoami` reports no authenticated Cloudflare account. On 2026-10-18 the
+owner approved public publication and created the public
+[source repository](https://github.com/dasarpemrograman/malleable-workspace)
+after repository creation through the integration was denied. The source and Git
+history are published there, and the README deployment button targets that source.
+The button's live Cloudflare provisioning flow remains unverified.
 
 These checks remain open in OpenSpec:
 
@@ -62,9 +57,8 @@ These checks remain open in OpenSpec:
 - 8.2: actual local-to-hosted and hosted-to-local transfer (the same code path has
   passed simulated cross-origin/runtime transfer checks).
 
-A public source repository and authorized Cloudflare account are required to
-finish those checks. No temporary cloud account, public source publication, or
-cloud resource deployment was substituted for that missing access.
+An authorized Cloudflare account is still required to finish those checks.
+No cloud resources have been deployed from this environment.
 
 ## Practical boundaries
 
@@ -73,4 +67,4 @@ Restoration is restricted to pristine targets and does not restore credentials.
 Alarms can redeliver or leave receipt unknown within the three-slot budget; verify
 and deduplicate at receivers. Event/delivery history currently grows without
 compaction. Local receiver hostname/DNS trust differs from hosted public egress.
-The deploy-button link is deliberately pending, not a working placeholder badge.
+The deploy-button link is available; live provisioning remains an open check.

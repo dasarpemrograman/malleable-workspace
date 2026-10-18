@@ -33,14 +33,10 @@ The application includes its Worker entry point, static asset build, Durable
 Object binding/class migration, secret example, and guided-deployment metadata.
 A Cloudflare account is required only for hosted deployment.
 
-**Deploy button pending:** this checkout has no public source repository yet.
-The GitHub integration previously denied repository creation. There is no working
-public-template button to advertise, and the live button flow has not been tested.
-Once the source is published, generate the badge with:
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https%3A%2F%2Fgithub.com%2Fdasarpemrograman%2Fmalleable-workspace)
 
-```sh
-node scripts/deploy-link.mjs https://github.com/OWNER/REPOSITORY
-```
+The button uses this public repository. The live account provisioning flow has
+not yet been verified; see [verification status](docs/verification.md).
 
 The [Deploy to Cloudflare flow](https://developers.cloudflare.com/workers/platform/deploy-buttons/)
 clones the public source and provisions the declared binding. Supply a unique

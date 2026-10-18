@@ -158,7 +158,14 @@ test("public API contract, template declarations, secret boundaries and source-d
   assert.equal(config.OWNER_KEY, undefined);
   assert.ok(!JSON.stringify(config).includes("remote"));
   const readme = await readFile("README.md", "utf8");
-  assert.match(readme, /Deploy button pending/);
+  const deployLink = readme.match(
+    /https:\/\/deploy\.workers\.cloudflare\.com\/\?url=[^)]+/,
+  );
+  assert.ok(deployLink);
+  assert.equal(
+    new URL(deployLink[0]).searchParams.get("url"),
+    "https://github.com/dasarpemrograman/malleable-workspace",
+  );
   assert.ok(!readme.includes("deploy.workers.cloudflare.com/?url=OWNER"));
   const production = await readFile(".worker/index.js", "utf8");
   assert.ok(!production.includes("testSQL"));
