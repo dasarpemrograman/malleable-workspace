@@ -120,3 +120,5 @@ workflows for Codex: propose, explore, new, continue, apply, update, ff, sync,
 archive, bulk-archive, verify, and onboard. The command uses a temporary custom
 profile so your global OpenSpec preferences stay intact. Codex exposes these as
 skills in `.agents/skills/`, including `openspec-verify-change`.
+
+<!-- Disposable contribution CI acceptance branch; do not merge. -->
