@@ -101,3 +101,9 @@ local/cloud synchronization is included.
 The implementation follows [OpenSpec workspace-mvp](openspec/changes/workspace-mvp/proposal.md).
 Live Cloudflare acceptance remains separately tracked in its task list; local
 runtime tests and a bundle dry run do not substitute for a deployed test.
+
+Run `npm run openspec:init` to install or refresh all 12 official OpenSpec
+workflows for Codex: propose, explore, new, continue, apply, update, ff, sync,
+archive, bulk-archive, verify, and onboard. The command uses a temporary custom
+profile so your global OpenSpec preferences stay intact. Codex exposes these as
+skills in `.agents/skills/`, including `openspec-verify-change`.

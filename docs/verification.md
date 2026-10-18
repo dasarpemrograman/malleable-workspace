@@ -49,6 +49,16 @@ after repository creation through the integration was denied. The source and Git
 history are published there, and the README deployment button targets that source.
 The button's live Cloudflare provisioning flow remains unverified.
 
+On 2026-10-18 the owner supplied the deployed origin
+https://male2.alfikrona.workers.dev/. Read-only HTTPS checks confirmed the root
+serves the application HTML (200). `/auth/session`, `/api/v1/capabilities`,
+`/api/v1/schema`, `/api/v1/items`, `/owner/connections`, `/owner/export`, and an
+unknown API route all reject unauthenticated requests with JSON (401) and
+`Cache-Control: no-store`. The protected-route checks also establish that a
+configured Worker/Durable Object responds; they do not establish successful
+owner login, content operations, guided provisioning, webhook delivery, or
+recovery. No deployed credentials were supplied or tested.
+
 These checks remain open in OpenSpec:
 
 - 7.2: real deploy-button provisioning and receipt at an authorized public receiver.
