@@ -4,6 +4,8 @@ A small personal workspace you can reshape without breaking its connections.
 Create your own item types and fields, use lists or boards, and connect tools
 through a stable API and signed outbound webhooks.
 
+Want to improve it? Start with the [contributor guide](CONTRIBUTING.md).
+
 Runs on **Cloudflare Workers**, with a SQLite-backed Durable Object. The same
 backend runs locally using Wrangler; no Cloudflare login is needed for local use.
 

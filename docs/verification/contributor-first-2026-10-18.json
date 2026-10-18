@@ -1,0 +1,15 @@
+{
+  "change": "contributor-first-codebase",
+  "baselineCommit": "5896f0e",
+  "date": "2026-10-18",
+  "node": "24.19.0",
+  "npm": "11.9.0",
+  "baseline": {
+    "typecheck": "passed",
+    "testsPassed": 23,
+    "browserJourneysPassed": 1,
+    "wranglerConfig": "temporary writable directory",
+    "productionAccess": false
+  },
+  "implementation": {}
+}

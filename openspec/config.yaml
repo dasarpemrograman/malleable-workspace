@@ -1,13 +1,19 @@
 schema: spec-driven
 
 context: |
-  A new personal workspace with bare minimum defaults and radical malleability.
-  Users must be able to reshape it while retaining bidirectional connections
-  with other workspaces and external tools or services.
-  Explore APIs, MCP, and ACP as distinct integration surfaces, not interchangeable
-  protocols. Clarify the intended ACP protocol before choosing an adapter.
-  No application stack, deployment model, or data model has been selected.
-  Repository setup does not authorize application implementation.
+  Malleable Workspace is an implemented npm/Node 24 and TypeScript application:
+  React client assets and a versioned HTTP API served by Cloudflare Workers,
+  with one SQLite-backed Workspace Durable Object bound as WORKSPACE and routed
+  by the fixed primary object name. Local Wrangler operation needs no cloud login.
+  Preserve stable resource IDs, API/snapshot formats, token authorization,
+  signed webhook bytes, delivery budgets, storage identity and migration history.
+  Hosted upgrades use reviewed source imports and guarded deployment; local
+  contribution checks must not deploy or access production secrets or data.
+  API, MCP and ACP are distinct protocols; no MCP/ACP adapter is implemented.
+  Use Scoped Commits (scope: description). Keep contributor docs and focused
+  tests aligned with module ownership. Proposal workflows authorize planning
+  only; implementation requires a separate apply request, and deploying requires
+  explicit operator intent. Historical acceptance records are not new test runs.
 
 rules:
   proposal:

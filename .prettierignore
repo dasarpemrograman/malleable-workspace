@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.worker/
+.wrangler/
+.agents/
+.codex/
+.dev.vars*
+.env*
+exports/
+test-results/
+playwright-report/
+worker-configuration.d.ts
+package-lock.json
+docs/openapi.json
+docs/verification/
+openspec/changes/archive/

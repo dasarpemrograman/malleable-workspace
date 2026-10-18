@@ -1,0 +1,101 @@
+name: Contribution checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      candidate_sha:
+        description: Full 40-character commit SHA to validate; use the trusted main workflow
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: contribution-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  select:
+    runs-on: ubuntu-latest
+    permissions: {}
+    outputs:
+      ref: ${{ steps.input.outputs.ref }}
+    steps:
+      - id: input
+        name: Validate and identify the requested commit
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_SHA: ${{ github.sha }}
+          REQUESTED_SHA: ${{ inputs.candidate_sha }}
+          WORKFLOW_REF: ${{ github.ref }}
+        run: |
+          if [[ "$EVENT_NAME" == workflow_dispatch ]]; then
+            [[ "$WORKFLOW_REF" == refs/heads/main ]] || { echo "Dispatch from trusted main."; exit 1; }
+            [[ "$REQUESTED_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "Supply a full lowercase 40-character commit SHA."; exit 1; }
+            selected="$REQUESTED_SHA"
+          else
+            selected="$EVENT_SHA"
+          fi
+          echo "ref=$selected" >> "$GITHUB_OUTPUT"
+          echo "Requested validation commit: $selected" >> "$GITHUB_STEP_SUMMARY"
+
+  core:
+    needs: select
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      WRANGLER_SEND_METRICS: false
+      OPENSPEC_TELEMETRY: "0"
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          ref: ${{ needs.select.outputs.ref }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Run contributor checks without production credentials
+        run: |
+          export XDG_CONFIG_HOME="$RUNNER_TEMP/core-config"
+          export WRANGLER_LOG_PATH="$RUNNER_TEMP/core-wrangler.log"
+          git rev-parse HEAD >> "$GITHUB_STEP_SUMMARY"
+          npm ci
+          npm run check
+          npx openspec validate --all --strict
+
+  browser:
+    needs: select
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      WRANGLER_SEND_METRICS: false
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          ref: ${{ needs.select.outputs.ref }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Exercise local browser journey
+        run: |
+          export XDG_CONFIG_HOME="$RUNNER_TEMP/browser-config"
+          export WRANGLER_LOG_PATH="$RUNNER_TEMP/browser-wrangler.log"
+          git rev-parse HEAD >> "$GITHUB_STEP_SUMMARY"
+          npm ci
+          npm run setup:local
+          npx playwright install --with-deps chromium
+          CHROMIUM_PATH="$(node -e "console.log(require('@playwright/test').chromium.executablePath())")" npm run test:browser
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: failure()
+        with:
+          name: browser-failure
+          path: test-results/**/*.png
+          retention-days: 3
+          if-no-files-found: ignore

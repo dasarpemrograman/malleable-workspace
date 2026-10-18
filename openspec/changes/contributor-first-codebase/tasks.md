@@ -2,14 +2,14 @@
 
 ## 1. Contributor entry point and conventions
 
-- [ ] 1.1 Record the existing typecheck, full test and browser baseline with tool versions and temporary writable Wrangler configuration; verify the existing suites pass before structural changes and record any environment failures separately.
+- [x] 1.1 Record the existing typecheck, full test and browser baseline with tool versions and temporary writable Wrangler configuration; verify the existing suites pass before structural changes and record any environment failures separately.
 - [ ] 1.2 Add `CONTRIBUTING.md`, the README entry link and a short PR template covering clean setup, private local sign-in, browser provisioning, focused checks, Scoped Commits and planning/apply boundaries; verify relative links resolve and follow the setup commands in a temporary checkout without Cloudflare credentials.
-- [ ] 1.3 Add Node 24 selection and editor defaults, and refresh OpenSpec project context while retaining applicable rules; verify the selected Node version agrees with package engines/CI and `openspec context` describes the implemented stack without implying proposal authorization permits application changes.
+- [x] 1.3 Add Node 24 selection and editor defaults, and refresh OpenSpec project context while retaining applicable rules; verify the selected Node version agrees with package engines/CI and `openspec context` describes the implemented stack without implying proposal authorization permits application changes.
 
 ## 2. Focused checks and formatting feedback
 
 - [ ] 2.1 Add independent contract/runtime/operator commands with automatic prerequisite preparation, retaining complete `npm test` and deploy/updater coverage; verify each suite runs from absent build outputs, a failing selected test returns nonzero, and every test is included exactly once in the aggregate.
-- [ ] 2.2 Extract shared runtime test helpers and organize suites by behavior where needed for focused execution; verify fixture-only RPCs remain excluded from production bundles and all original runtime scenarios still run through the public request boundary.
+- [x] 2.2 Extract shared runtime test helpers and organize suites by behavior where needed for focused execution; verify fixture-only RPCs remain excluded from production bundles and all original runtime scenarios still run through the public request boundary.
 - [ ] 2.3 Add matching explicit formatter fix/check scopes and the aggregate `check` command, documenting their use and applying any baseline formatting separately; verify a malformed maintained file is reported without modification, generated/private/state files are excluded, and `npm run check` propagates format/type/test failures.
 
 ## 3. Local edit feedback
@@ -20,9 +20,9 @@
 
 ## 4. Cohesive application modules
 
-- [ ] 4.1 Extract client transport/types, reusable controls, feature editors/connections/recovery and the application shell from the mount entry point; update the architecture map and verify typecheck plus the full browser journey, including conflict drafts, pagination, desktop/narrow layouts and accessibility.
-- [ ] 4.2 Extract backend store/initialization and request/authentication helpers while retaining the existing Durable Object export, lifecycle and central authorization gate; document capability ownership and verify missing-key/origin/scopes/revocation, persisted-state and newer-schema refusal runtime scenarios.
-- [ ] 4.3 Extract grouped API/owner handlers while preserving transaction bodies, validation and error mapping; update the API/schema change map and verify stable-ID mutations, false/zero values, revision conflicts, snapshots, bounded pagination and existing OpenAPI/contract checks.
+- [x] 4.1 Extract client transport/types, reusable controls, feature editors/connections/recovery and the application shell from the mount entry point; update the architecture map and verify typecheck plus the full browser journey, including conflict drafts, pagination, desktop/narrow layouts and accessibility.
+- [x] 4.2 Extract backend store/initialization and request/authentication helpers while retaining the existing Durable Object export, lifecycle and central authorization gate; document capability ownership and verify missing-key/origin/scopes/revocation, persisted-state and newer-schema refusal runtime scenarios.
+- [x] 4.3 Extract grouped API/owner handlers while preserving transaction bodies, validation and error mapping; update the API/schema change map and verify stable-ID mutations, false/zero values, revision conflicts, snapshots, bounded pagination and existing OpenAPI/contract checks.
 - [ ] 4.4 Extract event/delivery/alarm behavior with typed storage capabilities and preserved reservation/completion transactions; document the outbound-change boundary and verify exact signing bytes, pending-work persistence, duplicate alarms, retry budgets, subscription disable and stale completion handling using existing regressions plus only missing boundary cases.
 
 ## 5. Contribution CI and review feedback
