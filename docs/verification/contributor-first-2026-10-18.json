@@ -11,5 +11,266 @@
     "wranglerConfig": "temporary writable directory",
     "productionAccess": false
   },
-  "implementation": {}
+  "implementation": {
+    "sourceCommit": "2292f1bcbf9ba5caa6f04663242d0ac74679b898",
+    "typecheck": "passed",
+    "contractsPassed": 4,
+    "runtimePassed": 9,
+    "operatorsPassed": 17,
+    "allTestsPassed": 30,
+    "allTestsFailed": 0,
+    "allTestsSkipped": 0,
+    "browserJourneysPassed": 1,
+    "strictOpenSpecValidation": "passed",
+    "unchangedUpgradeIdentity": [
+      "Worker entry/export",
+      "WORKSPACE binding",
+      "primary object route",
+      "v1 class migration",
+      "provider retention guard"
+    ],
+    "extractedBackendBodies": "matched original after capability substitutions and formatting",
+    "formatProbeIsolation": "unique task-owned temporary directory; targeted regression passed"
+  },
+  "cleanCheckout": {
+    "checkout": "2292f1bcbf9ba5caa6f04663242d0ac74679b898",
+    "commands": [
+      {
+        "command": [
+          "node",
+          "scripts/dev.mjs"
+        ],
+        "exitCode": 1,
+        "expectedFailure": "occupied-port"
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "test:contracts"
+        ],
+        "exitCode": 0
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "test:runtime"
+        ],
+        "exitCode": 0
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "test:operators"
+        ],
+        "exitCode": 0
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "check"
+        ],
+        "exitCode": 0
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "test:browser"
+        ],
+        "exitCode": 0
+      },
+      {
+        "command": [
+          "npx",
+          "openspec",
+          "validate",
+          "--all",
+          "--strict"
+        ],
+        "exitCode": 0
+      }
+    ],
+    "development": {
+      "clientSaveObserved": true,
+      "workerSaveObserved": true,
+      "syntaxFailureAndRecovery": true,
+      "sameOrigin": "http://127.0.0.1:8787",
+      "snapshotSha256": "e187c10c7ceab05451e0eb12137c7db1b1c37feba77728c9d9bde34c03b6250b",
+      "restartPreservesStateAndSession": true,
+      "childFailureExitsNonzero": true,
+      "ctrlCReleasesPort": true,
+      "occupiedPortFails": true,
+      "ownerKeyUnchanged": true,
+      "allValidationPreservesDevelopmentData": true
+    }
+  },
+  "failurePropagation": [
+    {
+      "stage": "format",
+      "command": [
+        "npm",
+        "run",
+        "check"
+      ],
+      "exitCode": 1,
+      "diagnosticObserved": "quality-probe"
+    },
+    {
+      "stage": "types",
+      "command": [
+        "npm",
+        "run",
+        "check"
+      ],
+      "exitCode": 1,
+      "diagnosticObserved": "TS2322"
+    },
+    {
+      "stage": "focused-tests",
+      "command": [
+        "npm",
+        "run",
+        "test:operators",
+        "--",
+        "--test-name-pattern=intentional contribution failure"
+      ],
+      "exitCode": 1,
+      "diagnosticObserved": "contributor-failure-probe"
+    },
+    {
+      "stage": "aggregate-tests",
+      "command": [
+        "npm",
+        "run",
+        "check"
+      ],
+      "exitCode": 1,
+      "diagnosticObserved": "contributor-failure-probe"
+    }
+  ],
+  "githubRuns": [
+    {
+      "databaseId": 39121661779,
+      "event": "push",
+      "headSha": "2292f1bcbf9ba5caa6f04663242d0ac74679b898",
+      "conclusion": "success",
+      "url": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39121661779",
+      "jobs": [
+        {
+          "name": "select",
+          "conclusion": "success",
+          "url": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39121661779/job/117658330304"
+        },
+        {
+          "name": "browser",
+          "conclusion": "success",
+          "url": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39121661779/job/117658345610"
+        },
+        {
+          "name": "core",
+          "conclusion": "success",
+          "url": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39121661779/job/117658345680"
+        }
+      ]
+    },
+    {
+      "databaseId": 39121714984,
+      "event": "workflow_dispatch",
+      "headSha": "2292f1bcbf9ba5caa6f04663242d0ac74679b898",
+      "conclusion": "success",
+      "url": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39121714984",
+      "jobs": [
+        {
+          "name": "select",
+          "conclusion": "success",
+          "url": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39121714984/job/117658484657"
+        },
+        {
+          "name": "core",
+          "conclusion": "success",
+          "url": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39121714984/job/117658502494"
+        },
+        {
+          "name": "browser",
+          "conclusion": "success",
+          "url": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39121714984/job/117658502611"
+        }
+      ]
+    },
+    {
+      "databaseId": 39121709287,
+      "event": "pull_request",
+      "headSha": "20e9e75bc6565454bac4c4a0c5b86474a18258c0",
+      "conclusion": "success",
+      "url": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39121709287",
+      "jobs": [
+        {
+          "name": "select",
+          "conclusion": "success",
+          "url": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39121709287/job/117658465981"
+        },
+        {
+          "name": "browser",
+          "conclusion": "success",
+          "url": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39121709287/job/117658479231"
+        },
+        {
+          "name": "core",
+          "conclusion": "success",
+          "url": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39121709287/job/117658479329"
+        }
+      ]
+    },
+    {
+      "databaseId": 39121469977,
+      "event": "workflow_dispatch",
+      "headSha": "a14a127bae335e749c5ca1277179b1d4dd6e2e52",
+      "conclusion": "failure",
+      "url": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39121469977",
+      "jobs": [
+        {
+          "name": "select",
+          "conclusion": "failure",
+          "url": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39121469977/job/117657786140"
+        },
+        {
+          "name": "core",
+          "conclusion": "skipped",
+          "url": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39121469977/job/117657809266"
+        },
+        {
+          "name": "browser",
+          "conclusion": "skipped",
+          "url": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39121469977/job/117657809298"
+        }
+      ]
+    }
+  ],
+  "cleanup": {
+    "pullRequest": {
+      "headRefOid": "20e9e75bc6565454bac4c4a0c5b86474a18258c0",
+      "mergedAt": null,
+      "number": 1,
+      "state": "CLOSED",
+      "url": "https://github.com/dasarpemrograman/malleable-workspace/pull/1"
+    },
+    "remoteAcceptanceBranchDeleted": true,
+    "temporaryCheckoutsRemoved": true,
+    "testProcessesStopped": true,
+    "productionModified": false
+  },
+  "limits": [
+    "Linux exercised; macOS and Windows not exercised.",
+    "PR run used a same-repository untrusted branch; an external-account fork and a maintainer-approval prompt were not directly exercised.",
+    "No hosted application deployment performed; application compatibility checked through local runtime, packaging and browser suites."
+  ],
+  "scenarioCoverage": {
+    "count": 17,
+    "mapping": "docs/contributor-verification.md"
+  },
+  "status": "passed"
 }

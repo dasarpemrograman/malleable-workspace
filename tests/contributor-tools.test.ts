@@ -127,7 +127,8 @@ test("development rejects occupied ports and an interrupted initial build leaves
 });
 
 test("format check reports malformed maintained source without modifying source or local state", () => {
-  const file = "src/contributor-format-probe.ts";
+  const directory = mkdtempSync(join("src", "contributor-format-probe-"));
+  const file = join(directory, "probe.ts");
   const content = "export const probe={value:1}\n";
   try {
     writeFileSync(file, content, { flag: "wx" });
@@ -137,14 +138,14 @@ test("format check reports malformed maintained source without modifying source 
       { encoding: "utf8" },
     );
     assert.equal(result.status, 1);
-    assert.match(result.stdout + result.stderr, /contributor-format-probe/);
+    assert.match(result.stdout + result.stderr, /contributor-format-probe-/);
     assert.equal(readFileSync(file, "utf8"), content);
     assert.doesNotMatch(
       result.stdout + result.stderr,
       /\.dev\.vars|\.wrangler\/state/,
     );
   } finally {
-    rmSync(file, { force: true });
+    rmSync(directory, { recursive: true, force: true });
   }
 });
 
