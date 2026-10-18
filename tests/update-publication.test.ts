@@ -236,6 +236,8 @@ test("manual workflow isolates candidate execution from write credentials and pu
       artifact.with["artifact-ids"],
       "${{ needs.prepare.outputs.artifact }}",
     );
+    // ID-based downloads otherwise add an artifact-name directory, hiding the bundle.
+    assert.equal(artifact.with["merge-multiple"], true);
   }
   assert.match(JSON.stringify(publish), /needs.validate.result == 'success'/);
   assert.doesNotMatch(text, /schedule:|pull_request_target|wrangler deploy/);
