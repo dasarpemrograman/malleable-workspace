@@ -5,13 +5,27 @@
   "node": "24.19.0",
   "checks": {
     "typecheck": "passed",
-    "runtimeAndOperatorTests": { "passed": 23, "failed": 0 },
-    "browserJourney": { "passed": 1, "failed": 0 },
+    "runtimeAndOperatorTests": {
+      "passed": 23,
+      "failed": 0
+    },
+    "browserJourney": {
+      "passed": 1,
+      "failed": 0
+    },
     "guardedInitialDeploymentDryRun": "passed-no-upload",
     "strictOpenSpecValidation": "passed",
     "documentedLocalBootstrap": "passed-names-and-original-branch-preserved",
     "actionCommitPins": "all-four-resolved-through-github-api",
-    "publicationAndEnrollment": "local-git-and-provider-api-fixtures-only"
+    "publicationAndEnrollment": "local-git-and-provider-api-fixtures-only",
+    "canonicalActionsNoOp": {
+      "status": "passed",
+      "run": "https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39095087544",
+      "sourceCommit": "62783476ea18cc43531ca106d6fbc641130a1365",
+      "preparation": "current",
+      "candidateValidation": "skipped-no-candidate",
+      "publication": "skipped-no-candidate"
+    }
   },
   "templateProvenance": {
     "observedRepository": "dasarpemrograman/male2",
@@ -28,8 +42,15 @@
     "pullRequest": null,
     "workersBuild": null,
     "activeVersion": null,
-    "incompleteTasks": ["2.4", "4.1", "4.2"]
+    "incompleteTasks": [
+      "2.4",
+      "4.1",
+      "4.2"
+    ]
   },
-  "cleanup": { "newExternalResources": [], "disposableLocalBootstrapFixtureRemoved": true },
+  "cleanup": {
+    "newExternalResources": [],
+    "disposableLocalBootstrapFixtureRemoved": true
+  },
   "productionModified": false
 }

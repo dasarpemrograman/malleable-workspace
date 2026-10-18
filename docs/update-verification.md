@@ -30,7 +30,14 @@ and [operator guide](updates.md).
 - All four pinned first-party Action commits resolved through the GitHub API.
   YAML tests checked manual-only triggering, job credentials, trusted publication
   checkout, immutable preparer artifact IDs and actual validation-result wiring.
-  This is static/fixture coverage, not a successful GitHub Actions run.
+  Candidate validation/publication remain static/fixture coverage. A real
+  [canonical self-update run](https://github.com/dasarpemrograman/malleable-workspace/actions/runs/39095087544)
+  passed at `62783476ea18cc43531ca106d6fbc641130a1365`: trusted preparation
+  reported current, and candidate validation/publication were skipped. No PR or
+  deployment occurred. GitHub initially rejected `runner.temp` in job-level env;
+  moving that configuration into the runner step corrected its expression context.
+  A regression assertion and the four publication/workflow tests passed afterward,
+  along with type checking.
 
 The Git fixtures cover unrelated template histories and forks, automatic and
 explicit baseline selection, ambiguity, dirty trees, binary content, executable
